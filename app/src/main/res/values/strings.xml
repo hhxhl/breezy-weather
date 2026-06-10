@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- App -->
     <string name="app_name">Weather</string>
-    <string name="breezy_weather" translatable="false">Weather</string>
+    <string name="breezy_weather" translatable="false">Breezy Weather</string>
     <string name="forecast">Forecast</string>
     <string name="daily_forecast">Daily forecast</string>
     <string name="hourly_forecast">Hourly forecast</string>
@@ -783,6 +783,9 @@
     <!-- Literally means “Will be in light mode when sun is up and in dark mode when sun is down” -->
     <string name="settings_appearance_dark_mode_locations_day_night">Follow day/night</string>
     <string name="settings_appearance_dark_mode_locations_dark">Always dark when app is in dark mode</string>
+    <string name="settings_appearance_launcher_icon_title">Show launcher icon</string>
+    <string name="settings_appearance_launcher_icon_summary_on">App icon is shown in the launcher.</string>
+    <string name="settings_appearance_launcher_icon_summary_off">App icon is hidden. You can still open the app from system app settings, widgets, or notifications.</string>
     <string name="settings_appearance_icon_pack_title">Icon pack</string>
     <string name="settings_icon_packs_title">Icon packs</string>
     <string name="settings_icon_packs_check_details">Check details</string>

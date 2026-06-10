@@ -180,6 +180,14 @@ class SettingsManager private constructor(
             config.getString("dark_mode", null) ?: "system"
         )
 
+
+    var isLauncherIconVisible: Boolean
+        set(value) {
+            config.edit().putBoolean("launcher_icon_visible", value).apply()
+            notifySettingsChanged()
+        }
+        get() = config.getBoolean("launcher_icon_visible", true)
+
     // Default config is: follow system on Android 10+ (disabled), automatic day/night switch (enabled)
     // on Android < 10 where dark mode doesn’t exist natively
     var dayNightModeForLocations: Boolean

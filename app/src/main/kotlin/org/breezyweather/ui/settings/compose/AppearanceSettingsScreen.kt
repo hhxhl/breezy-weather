@@ -61,6 +61,7 @@ import org.breezyweather.common.extensions.toBitmap
 import org.breezyweather.common.extensions.uiModeManager
 import org.breezyweather.common.options.DarkMode
 import org.breezyweather.common.options.DarkModeLocation
+import org.breezyweather.common.utils.LauncherIconUtils
 import org.breezyweather.common.utils.helpers.IntentHelper
 import org.breezyweather.domain.settings.SettingsManager
 import org.breezyweather.ui.common.composables.AlertDialogLink
@@ -76,6 +77,7 @@ import org.breezyweather.ui.settings.preference.composables.ListPreferenceView
 import org.breezyweather.ui.settings.preference.composables.ListPreferenceViewWithCard
 import org.breezyweather.ui.settings.preference.composables.PreferenceScreen
 import org.breezyweather.ui.settings.preference.composables.PreferenceViewWithCard
+import org.breezyweather.ui.settings.preference.composables.SwitchPreferenceView
 import org.breezyweather.ui.settings.preference.largeSeparatorItem
 import org.breezyweather.ui.settings.preference.listPreferenceItem
 import org.breezyweather.ui.settings.preference.sectionFooterItem
@@ -212,6 +214,19 @@ fun AppearanceSettingsScreen(
                     onValueChanged = {
                         val newDarkModeLocation = DarkModeLocation.getInstance(it)
                         SettingsManager.getInstance(context).dayNightModeForLocations = newDarkModeLocation.value
+                    }
+                )
+            }
+            smallSeparatorItem()
+            switchPreferenceItem(R.string.settings_appearance_launcher_icon_title) { id ->
+                SwitchPreferenceView(
+                    titleId = id,
+                    summaryOnId = R.string.settings_appearance_launcher_icon_summary_on,
+                    summaryOffId = R.string.settings_appearance_launcher_icon_summary_off,
+                    checked = SettingsManager.getInstance(context).isLauncherIconVisible,
+                    onValueChanged = { enabled ->
+                        SettingsManager.getInstance(context).isLauncherIconVisible = enabled
+                        LauncherIconUtils.setLauncherIconVisible(context, enabled)
                     }
                 )
             }

@@ -227,6 +227,9 @@
     <string name="settings_location_service">位置服务</string>
     <string name="settings_appearance_dark_mode_title">深色模式</string>
     <string name="settings_appearance">外观</string>
+    <string name="settings_appearance_launcher_icon_title">显示桌面图标</string>
+    <string name="settings_appearance_launcher_icon_summary_on">应用图标会显示在桌面和启动器中。</string>
+    <string name="settings_appearance_launcher_icon_summary_off">应用图标会隐藏。仍可从系统应用信息、小组件或通知进入应用。</string>
     <string name="settings_appearance_icon_pack_title">图标包</string>
     <string name="settings_main_background_animation_title">背景动画</string>
     <string name="settings_main_gravity_sensor_switch">重力感应</string>

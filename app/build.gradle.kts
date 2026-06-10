@@ -23,7 +23,7 @@ configure<ApplicationExtension> {
     namespace = "org.breezyweather"
 
     defaultConfig {
-        applicationId = "com.hhxhl.weather"
+        applicationId = "org.breezyweather"
         versionCode = 60202
         versionName = "6.2.2"
 

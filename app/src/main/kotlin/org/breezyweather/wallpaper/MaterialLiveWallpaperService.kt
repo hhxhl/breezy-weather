@@ -17,7 +17,6 @@
 package org.breezyweather.wallpaper
 
 import android.app.WallpaperColors
-import android.graphics.Color
 import android.graphics.PixelFormat
 import android.graphics.drawable.Drawable
 import android.hardware.Sensor
@@ -430,20 +429,7 @@ class MaterialLiveWallpaperService : WallpaperService() {
         @RequiresApi(Build.VERSION_CODES.O_MR1)
         override fun onComputeColors(): WallpaperColors? {
             return if (mBackground != null) {
-                when (mWeatherKind) {
-                    WeatherView.WEATHER_KIND_CLOUD,
-                    WeatherView.WEATHER_KIND_CLOUDY,
-                    WeatherView.WEATHER_KIND_WIND,
-                    WeatherView.WEATHER_KIND_SNOW,
-                    WeatherView.WEATHER_KIND_HAIL -> {
-                        WallpaperColors(
-                            Color.valueOf(0.45f, 0.48f, 0.52f),
-                            Color.valueOf(0.55f, 0.58f, 0.62f),
-                            Color.valueOf(0.35f, 0.38f, 0.42f)
-                        )
-                    }
-                    else -> WallpaperColors.fromDrawable(mBackground)
-                }
+                WallpaperColors.fromDrawable(mBackground)
             } else {
                 null
             }

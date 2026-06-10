@@ -31,6 +31,7 @@ import org.breezyweather.common.activities.BreezyActivity
 import org.breezyweather.common.extensions.uiModeManager
 import org.breezyweather.common.extensions.workManager
 import org.breezyweather.common.utils.AndroidSignatureFinder
+import org.breezyweather.common.utils.LauncherIconUtils
 import org.breezyweather.common.utils.helpers.LogHelper
 import org.breezyweather.domain.settings.SettingsManager
 import org.breezyweather.remoteviews.Notifications
@@ -88,6 +89,10 @@ class BreezyWeather : Application(), Configuration.Provider {
             // if the app wants to be displayed in dark mode before it launches so that the splash
             // screen can be displayed accordingly.
             setDayNightMode()
+            LauncherIconUtils.setLauncherIconVisible(
+                this,
+                SettingsManager.getInstance(this).isLauncherIconVisible
+            )
         }
 
         /*
