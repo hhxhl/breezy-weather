@@ -1,36 +1,26 @@
-name: Build Breezy Weather
+name: Build Hhxhl Weather
 
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'hhxhl-main'
       upload_name:
         description: 'Artifact name'
         required: false
-        default: 'breezy-weather'
-  push:
-    branches:
-      - main
-      - dev
-    tags:
-      - 'v*'
-    paths:
-      - '**'
-      - '.github/workflows/build-breezy.yml'
-  pull_request:
-    branches:
-      - main
-      - dev
+        default: 'hhxhl-weather'
 
 jobs:
   build:
     runs-on: ubuntu-24.04
 
-    env:
-      BUILD_TOOLS_VERSION: '36.0.0'
-
     steps:
-      - name: Checkout
+      - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -48,7 +38,6 @@ jobs:
         run: ./gradlew assembleBasicRelease
 
       - name: Sign APKs
-        if: github.event_name != 'pull_request'
         uses: r0adkll/sign-android-release@v1
         with:
           releaseDirectory: app/build/outputs/apk/basic/release
@@ -56,8 +45,6 @@ jobs:
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
-        env:
-          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOLS_VERSION }}
 
       - name: Collect APKs
         shell: bash
@@ -65,21 +52,17 @@ jobs:
           set -euo pipefail
           mkdir -p artifacts
           shopt -s nullglob
+
           for apk in app/build/outputs/apk/basic/release/*-signed.apk; do
             cp "$apk" "artifacts/$(basename "$apk")"
           done
-          for apk in app/build/outputs/apk/basic/release/*.apk; do
-            case "$apk" in
-              *-signed.apk) ;;
-              *) cp "$apk" "artifacts/$(basename "$apk")" ;;
-            esac
-          done
+
           ls -lh artifacts
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.upload_name || 'breezy-weather' }}
+          name: ${{ github.event.inputs.upload_name }}
           path: artifacts/*.apk
           if-no-files-found: error
           retention-days: 10
