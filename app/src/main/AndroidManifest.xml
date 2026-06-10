@@ -134,7 +134,7 @@
         </activity>
 
         <activity-alias
-            android:name=".LauncherAlias"
+            android:name="${applicationId}.LauncherAlias"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/ic_launcher"
