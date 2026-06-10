@@ -1,68 +1,81 @@
 name: Build Hhxhl Weather
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to build'
-        required: true
-        default: 'hhxhl-main'
-      upload_name:
-        description: 'Artifact name'
-        required: false
-        default: 'hhxhl-weather'
+workflow_dispatch:
+inputs:
+branch:
+description: 'Branch to build'
+required: true
+default: 'hhxhl-main'
+
+```
+  upload_name:
+    description: 'Artifact name'
+    required: false
+    default: 'hhxhl-weather'
+```
 
 jobs:
-  build:
-    runs-on: ubuntu-24.04
+build:
+runs-on: ubuntu-24.04
 
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch }}
+```
+steps:
+  - name: Checkout source
+    uses: actions/checkout@v4
+    with:
+      ref: ${{ github.event.inputs.branch }}
 
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version-file: .github/.java-version
-          distribution: temurin
+  - name: Set up JDK
+    uses: actions/setup-java@v4
+    with:
+      java-version-file: .github/.java-version
+      distribution: temurin
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+  - name: Set up Gradle
+    uses: gradle/actions/setup-gradle@v4
 
-      - name: Clean
-        run: ./gradlew clean
+  - name: Clean
+    run: ./gradlew clean
 
-      - name: Assemble basic release
-        run: ./gradlew assembleBasicRelease
+  - name: Assemble basic release
+    run: ./gradlew assembleBasicRelease
 
-      - name: Sign APKs
-        uses: r0adkll/sign-android-release@v1
-        with:
-          releaseDirectory: app/build/outputs/apk/basic/release
-          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-          alias: ${{ secrets.ALIAS }}
-          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+  - name: Sign APKs
+    uses: r0adkll/sign-android-release@v1
+    with:
+      releaseDirectory: app/build/outputs/apk/basic/release
+      signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+      alias: ${{ secrets.ALIAS }}
+      keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+      keyPassword: ${{ secrets.KEY_PASSWORD }}
 
-      - name: Collect APKs
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p artifacts
-          shopt -s nullglob
+  - name: Collect signed APKs
+    shell: bash
+    run: |
+      set -euo pipefail
 
-          for apk in app/build/outputs/apk/basic/release/*-signed.apk; do
-            cp "$apk" "artifacts/$(basename "$apk")"
-          done
+      mkdir -p artifacts
+      shopt -s nullglob
 
-          ls -lh artifacts
+      signed_apks=(app/build/outputs/apk/basic/release/*-signed.apk)
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ github.event.inputs.upload_name }}
-          path: artifacts/*.apk
-          if-no-files-found: error
-          retention-days: 10
+      if [ ${#signed_apks[@]} -eq 0 ]; then
+        echo "ERROR: No signed APK found!"
+        echo "Contents of release directory:"
+        ls -lah app/build/outputs/apk/basic/release || true
+        exit 1
+      fi
+
+      cp "${signed_apks[@]}" artifacts/
+
+      echo "Collected signed APKs:"
+      ls -lh artifacts
+
+  - name: Upload APK artifact
+    uses: actions/upload-artifact@v4
+    with:
+      name: ${{ github.event.inputs.upload_name }}
+      path: artifacts/*.apk
+      if-no-files-found: error
+      retention-days: 10
