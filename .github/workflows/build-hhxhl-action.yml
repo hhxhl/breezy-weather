@@ -45,7 +45,7 @@ jobs:
         run: ./gradlew clean
 
       - name: Assemble basic release
-        run: ./gradlew assembleBasicRelease -Pbreezy
+        run: ./gradlew assembleBasicRelease
 
       - name: Sign APKs
         if: github.event_name != 'pull_request'
