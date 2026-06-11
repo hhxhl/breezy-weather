@@ -399,7 +399,7 @@ class MaterialLiveWallpaperService : WallpaperService() {
                 sensorManager?.registerListener(
                     mGravityListener,
                     mGravitySensor,
-                    SensorManager.SENSOR_DELAY_FASTEST
+                    SensorManager.SENSOR_DELAY_UI
                 )
             } else {
                 sensorManager?.unregisterListener(mGravityListener, mGravitySensor)
@@ -409,7 +409,7 @@ class MaterialLiveWallpaperService : WallpaperService() {
             if (mAnimate) {
                 val screenRefreshRate = ContextCompat.getDisplayOrDefault(this@MaterialLiveWallpaperService)
                     .refreshRate.let {
-                        if (it > 60f) 60f else it
+                        if (it > 30f) 30f else it
                     }
                 mIntervalController = AsyncHelper.intervalRunOnUI(
                     { mHandler?.post(mDrawableRunnable) },

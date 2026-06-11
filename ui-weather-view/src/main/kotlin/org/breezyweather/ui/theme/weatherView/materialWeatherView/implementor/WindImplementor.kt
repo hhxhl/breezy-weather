@@ -169,7 +169,7 @@ class WindImplementor(
 
     companion object {
         private const val INITIAL_ROTATION_3D = 1000f
-        private const val WIND_COUNT = 160
+        private const val WIND_COUNT = 80
 
         @ColorInt
         fun getThemeColor(daylight: Boolean): Int {
