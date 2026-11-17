@@ -30,12 +30,13 @@ import kotlin.math.sin
 class SunImplementor(
     @Size(2) canvasSizes: IntArray,
     animate: Boolean,
+    darkMode: Boolean,
 ) : WeatherAnimationImplementor() {
     private val mAnimate = animate
     private val mPaint = Paint().apply {
         style = Paint.Style.FILL
         isAntiAlias = true
-        color = Color.WHITE
+        color = if (darkMode) Color.BLACK else Color.WHITE
     }
     private val mAngles = FloatArray(3)
     private val mUnitSizes: FloatArray = floatArrayOf(
@@ -67,7 +68,7 @@ class SunImplementor(
             val deltaY = (sin(rotation3D * Math.PI / 180.0) * -0.3 * canvasSizes[0]).toFloat()
             canvas.translate(canvasSizes[0] + deltaX, (SUN_POSITION * canvasSizes[0] + deltaY).toFloat())
 
-            arrayOf(SMALL_SUN_ALPHA, MEDIUM_SUN_ALPHA, LARGE_SUN_ALPHA).forEachIndexed { index, alpha ->
+            SUN_ALPHAS.forEachIndexed { index, alpha ->
                 mPaint.alpha = ((1 - scrollRate) * 255 * alpha).toInt()
                 canvas.rotate(mAngles[index])
                 for (i in 0..3) {
@@ -90,6 +91,7 @@ class SunImplementor(
         const val SMALL_SUN_ALPHA = 0.16
         const val MEDIUM_SUN_ALPHA = 0.08
         const val LARGE_SUN_ALPHA = 0.04
+        private val SUN_ALPHAS = doubleArrayOf(SMALL_SUN_ALPHA, MEDIUM_SUN_ALPHA, LARGE_SUN_ALPHA)
 
         @get:ColorInt
         val themeColor: Int

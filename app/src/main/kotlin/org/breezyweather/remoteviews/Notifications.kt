@@ -20,7 +20,6 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
-import android.os.Build
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
@@ -37,6 +36,7 @@ import breezyweather.domain.weather.reference.AlertSeverity
 import org.breezyweather.R
 import org.breezyweather.common.extensions.buildNotificationChannel
 import org.breezyweather.common.extensions.buildNotificationChannelGroup
+import org.breezyweather.common.extensions.cancelNotification
 import org.breezyweather.common.extensions.notificationBuilder
 import org.breezyweather.common.extensions.notify
 import org.breezyweather.common.utils.helpers.IntentHelper
@@ -220,7 +220,7 @@ object Notifications {
             notificationId,
             buildSingleAlertNotification(context, location, alert, inGroup, notificationId)
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && inGroup) {
+        if (inGroup) {
             context.notify(
                 ID_ALERT_GROUP,
                 buildAlertGroupSummaryNotification(context, location, alert, notificationId)
@@ -265,7 +265,7 @@ object Notifications {
                 .setSummaryText(time)
                 .bigText(description)
         )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && inGroup) {
+        if (inGroup) {
             builder.setGroup(ALERT_GROUP_KEY)
         }
         return builder.build()
@@ -318,12 +318,14 @@ object Notifications {
         if (!SettingsManager.getInstance(context).isPrecipitationPushEnabled ||
             location.weather?.minutelyForecast.isNullOrEmpty()
         ) {
+            context.cancelNotification(ID_PRECIPITATION)
             return
         }
         // val config = ConfigStore(context, PREFERENCE_SHORT_TERM_PRECIPITATION_ALERT)
         // val timestamp = config.getLong(KEY_PRECIPITATION_DATE, 0)
 
         if (location.weather!!.hasMinutelyPrecipitation) {
+            context.cancelNotification(ID_PRECIPITATION)
             context.notify(
                 ID_PRECIPITATION,
                 getNotificationBuilder(
@@ -344,6 +346,8 @@ object Notifications {
                 .putString(KEY_PRECIPITATION_LOCATION_KEY, location.formattedId)
                 .putLong(KEY_PRECIPITATION_DATE, System.currentTimeMillis())
                 .apply()*/
+        } else {
+            context.cancelNotification(ID_PRECIPITATION)
         }
     }
 

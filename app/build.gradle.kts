@@ -24,8 +24,8 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.hhxhl.weather"
-        versionCode = 60202
-        versionName = "6.2.2"
+        versionCode = 60203
+        versionName = "6.2.3"
 
         buildConfigField("String", "COMMIT_COUNT", "\"${getCommitCount()}\"")
         buildConfigField("String", "COMMIT_SHA", "\"${getGitSha()}\"")
@@ -363,7 +363,7 @@ configure<ApplicationExtension> {
         }
         getByName("freenet") {
             kotlin.directories += "src/src_freenet"
-            res.directories += "src/res_freenet"
+            // res.directories += "src/res_freenet"
             if (Config.isBreezy) {
                 res.directories += "src/res_breezy"
             } else {

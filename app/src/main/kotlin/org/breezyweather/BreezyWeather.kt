@@ -17,16 +17,21 @@
 package org.breezyweather
 
 import android.app.Application
+import android.app.LocaleManager
 import android.app.UiModeManager
 import android.content.pm.ApplicationInfo
 import android.os.Build
+import android.os.LocaleList
 import android.os.Process
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import androidx.work.WorkInfo
+import androidx.work.WorkQuery
 import dagger.hilt.android.HiltAndroidApp
 import org.breezyweather.common.activities.BreezyActivity
 import org.breezyweather.common.extensions.uiModeManager
+import org.breezyweather.common.extensions.workManager
 import org.breezyweather.common.utils.AndroidSignatureFinder
 import org.breezyweather.common.utils.helpers.LogHelper
 import org.breezyweather.domain.settings.SettingsManager
@@ -63,13 +68,11 @@ class BreezyWeather : Application(), Configuration.Provider {
     private val activitySet: MutableSet<BreezyActivity> by lazy {
         HashSet()
     }
-
     var topActivity: BreezyActivity? = null
         private set
 
     val debugMode: Boolean by lazy {
-        applicationInfo != null &&
-            applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+        applicationInfo != null && applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
     }
 
     @Inject
@@ -82,13 +85,18 @@ class BreezyWeather : Application(), Configuration.Provider {
 
         setupNotificationChannels()
 
-        if (getProcessName() == packageName) {
-            // Sets and persists the night mode setting for this app.
-            // This allows the system to know if the app wants to be displayed
-            // in dark mode before it launches so that the splash screen can be
-            // displayed accordingly.
+        if (getProcessName().equals(packageName)) {
+            // Sets and persists the night mode setting for this app. This allows the system to know
+            // if the app wants to be displayed in dark mode before it launches so that the splash
+            // screen can be displayed accordingly.
             setDayNightMode()
         }
+
+        /*
+         * We don’t use the return value, but querying the work manager might help bringing back
+         * scheduled workers after the app has been killed/shutdown on some devices
+         */
+        this.workManager.getWorkInfosLiveData(WorkQuery.fromStates(WorkInfo.State.ENQUEUED))
     }
 
     fun addActivity(a: BreezyActivity) {
@@ -111,37 +119,47 @@ class BreezyWeather : Application(), Configuration.Provider {
 
     fun recreateAllActivities() {
         val topA = topActivity
-
         for (a in activitySet) {
-            if (a != topA) {
-                a.recreate()
-            }
+            if (a != topA) a.recreate()
         }
-
         // ensure that top activity stays on top by recreating it last
         topA?.recreate()
     }
 
     private fun setDayNightMode() {
-        updateDayNightMode(
-            SettingsManager.getInstance(this).darkMode.value
-        )
+        updateDayNightMode(SettingsManager.getInstance(this).darkMode.value)
     }
 
     fun updateDayNightMode(dayNightMode: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            uiModeManager?.setApplicationNightMode(
-                when (dayNightMode) {
-                    AppCompatDelegate.MODE_NIGHT_NO ->
-                        UiModeManager.MODE_NIGHT_NO
-
-                    AppCompatDelegate.MODE_NIGHT_YES ->
-                        UiModeManager.MODE_NIGHT_YES
-
-                    else ->
-                        UiModeManager.MODE_NIGHT_AUTO
+            // Since Android 13, the night mode and the app-specific language are persisted together,
+            // and setting the night mode can leave the language out of the persisted record, so it
+            // gets lost on next reboot. Setting the language again only persists it if it changed,
+            // so we reset it to "follow system" first.
+            // LocaleManager is used instead of AppCompatDelegate, as it also works without activity
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val localeManager = getSystemService(LocaleManager::class.java)
+                val appLocales = localeManager?.applicationLocales
+                uiModeManager?.setApplicationNightMode(
+                    when (dayNightMode) {
+                        AppCompatDelegate.MODE_NIGHT_NO -> UiModeManager.MODE_NIGHT_NO
+                        AppCompatDelegate.MODE_NIGHT_YES -> UiModeManager.MODE_NIGHT_YES
+                        else -> UiModeManager.MODE_NIGHT_AUTO
+                    }
+                )
+                if (appLocales?.isEmpty == false) {
+                    localeManager.applicationLocales = LocaleList.getEmptyLocaleList()
+                    localeManager.applicationLocales = appLocales
                 }
-            )
+            } else {
+                uiModeManager?.setApplicationNightMode(
+                    when (dayNightMode) {
+                        AppCompatDelegate.MODE_NIGHT_NO -> UiModeManager.MODE_NIGHT_NO
+                        AppCompatDelegate.MODE_NIGHT_YES -> UiModeManager.MODE_NIGHT_YES
+                        else -> UiModeManager.MODE_NIGHT_AUTO
+                    }
+                )
+            }
         } else {
             AppCompatDelegate.setDefaultNightMode(dayNightMode)
         }
@@ -151,15 +169,13 @@ class BreezyWeather : Application(), Configuration.Provider {
         try {
             Notifications.createChannels(this)
         } catch (e: Exception) {
-            LogHelper.log(
-                msg = "Failed to setup notification channels"
-            )
+            LogHelper.log(msg = "Failed to setup notification channels")
         }
     }
 
-    // GitHub is a non-free network, so we cannot automatically check for updates
-    // in the "freenet" flavor.
-    // We ask for permission to manually check updates in the browser instead.
+    // GitHub is a non-free network, so we cannot automatically check for updates in the
+    // "freenet" flavor
+    // We ask for permission to manually check updates in the browser instead
     val isGitHubUpdateCheckerEnabled: Boolean
         get() = BuildConfig.FLAVOR != "freenet" &&
             BuildConfig.GITHUB_REPO.isNotEmpty() &&
@@ -167,69 +183,50 @@ class BreezyWeather : Application(), Configuration.Provider {
             BuildConfig.GITHUB_RELEASE_PREFIX.isNotEmpty() &&
             (
                 (
-                    !BuildConfig.GITHUB_ORG.contains(
-                        "breezy",
-                        ignoreCase = true
-                    ) &&
-                    !BuildConfig.GITHUB_RELEASE_PREFIX.contains(
-                        "breezy",
-                        ignoreCase = true
-                    ) &&
-                    !BuildConfig.GITHUB_REPO.contains(
-                        "breezy",
-                        ignoreCase = true
-                    )
-                ) ||
+                    !BuildConfig.GITHUB_ORG.contains("breezy", ignoreCase = true) &&
+                        !BuildConfig.GITHUB_RELEASE_PREFIX.contains("breezy", ignoreCase = true) &&
+                        !BuildConfig.GITHUB_REPO.contains("breezy", ignoreCase = true)
+                    ) ||
                     isSignedByBreezy ||
                     debugMode
-            )
+                )
 
     /*
-     * /!\ Changing the below logic to impersonate Breezy Weather is a violation
-     * of the LGPL license that was granted to you.
-     *
-     * You're allowed to make a fork, but you're NOT allowed to impersonate the
-     * "Breezy Weather" app.
-     *
+     * /!\ Changing the below logic to impersonate Breezy Weather is a violation of the LGPL license that was granted
+     * to you.
+     * You're allowed to make a fork, but you're NOT allowed to impersonate the "Breezy Weather" app.
      * Use your own app name. See instructions in the README file, License section.
      */
     val isSignedByBreezy: Boolean
         get() {
-            return AndroidSignatureFinder
-                .getAndroidSignatures(packageName, packageManager)
-                .any {
-                    it ==
-                        "29:D4:35:F7:0A:A9:AE:C3:C1:FA:FF:7F:7F:FA:6E:15:78:50:88:D8:7F:06:EC:FC:AB:9C:3C:C6:2D:C2:69:D8"
-                }
+            return AndroidSignatureFinder.getAndroidSignatures(packageName, packageManager).any {
+                it == "29:D4:35:F7:0A:A9:AE:C3:C1:FA:FF:7F:7F:FA:6E:15:78:50:88:D8:7F:06:EC:FC:AB:9C:3C:C6:2D:C2:69:D8"
+            }
         }
 
     val isImpersonatingBreezyWeather: Boolean
         get() {
             return (
-                getString(R.string.brand_name)
-                    .contains("breezy", ignoreCase = true) ||
-                    BuildConfig.APPLICATION_ID
-                        .contains("breezy", ignoreCase = true)
+                getString(R.string.brand_name).contains("breezy", ignoreCase = true) ||
+                    BuildConfig.APPLICATION_ID.contains("breezy", ignoreCase = true)
                 ) &&
                 !isSignedByBreezy &&
                 !debugMode
         }
 
     /*
-     * Returns a User-Agent sources can use.
+     * Returns a User-Agent sources can use
      */
     val userAgent: String
         get() {
-            return if (
-                !getString(R.string.brand_name)
-                    .contains("breezy", ignoreCase = true) ||
+            return if (!getString(R.string.brand_name).contains("breezy", ignoreCase = true) ||
                 isSignedByBreezy ||
                 debugMode
             ) {
                 "${getString(R.string.brand_name)}/${BuildConfig.VERSION_NAME} ${BuildConfig.REPORT_ISSUE}"
             } else {
-                // Do not return anything if someone is trying to impersonate
-                // Breezy Weather or we would be made responsible for their app calls.
+                // Do not return anything if someone is trying to impersonate Breezy Weather
+                // or we would be made responsible for their app calls
                 ""
             }
         }

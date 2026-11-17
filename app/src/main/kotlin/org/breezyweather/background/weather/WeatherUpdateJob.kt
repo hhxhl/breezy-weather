@@ -128,8 +128,12 @@ class WeatherUpdateJob @AssistedInject constructor(
                 }
             } finally {
                 notifier.cancelProgressNotification()
-                /*if ((BuildConfig.FLAVOR != "freenet" && SettingsManager.getInstance(context).isAppUpdateCheckEnabled) ||
-                    Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+                /*if (
+                    (
+                        BreezyWeather.instance.isGitHubUpdateCheckerEnabled &&
+                            SettingsManager.getInstance(context).isAppUpdateCheckEnabled
+                        ) ||
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.N
                 ) {*/
                 if (BreezyWeather.instance.isGitHubUpdateCheckerEnabled &&
                     SettingsManager.getInstance(context).isAppUpdateCheckEnabled
@@ -332,6 +336,9 @@ class WeatherUpdateJob @AssistedInject constructor(
                     .with(Location::class.java)
                     .postValue(it.second)
             }
+
+            // Update live wallpaper
+            refreshHelper.updateWallpaperIfNecessary(locationList)
         }
 
         if (failedUpdates.isNotEmpty()) {
