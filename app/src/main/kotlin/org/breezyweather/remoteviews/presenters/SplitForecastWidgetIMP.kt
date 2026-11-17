@@ -275,7 +275,11 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         val temperatureUnit = settings.getTemperatureUnit(context)
         val monochrome = settings.isWidgetUsingMonochromeIcons
 
-        views.setTextViewText(R.id.widget_material_you_forecast_city, location.getPlace(context))
+        // Match the main screen: mark locations provided by device positioning only.
+        views.setTextViewText(
+            R.id.widget_material_you_forecast_city,
+            (if (location.isCurrentPosition) "⊙ " else "") + location.getPlace(context)
+        )
 
         weather.current?.weatherCode?.let {
             views.setViewVisibility(R.id.widget_material_you_forecast_currentIcon, View.VISIBLE)
