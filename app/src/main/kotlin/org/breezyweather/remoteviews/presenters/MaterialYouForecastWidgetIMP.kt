@@ -21,6 +21,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.Build
 import android.util.SizeF
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.LayoutRes
@@ -131,11 +132,70 @@ private fun buildWeatherWidget(
 internal fun buildSplitForecastViews(
     context: Context,
     location: Location?,
+    cardAlpha: Int,
+    textSize: Int,
     hideSubtitle: Boolean,
     subtitleData: String?,
     pollenIndexSource: PollenIndexSource?,
 ): RemoteViews {
     val views = buildRemoteViews(context, location, R.layout.widget_split_forecast)
+    // Reuse the original widget opacity setting: fade only the card, not its content.
+    views.setInt(R.id.widget_split_forecast_card, "setImageAlpha", (cardAlpha.coerceIn(0, 100) * 255) / 100)
+    if (textSize != 100) {
+        // Use the same percentage-based sizing as existing configurable widgets.
+        // These base sizes match the split widget XML, keeping 100% unchanged.
+        val scale = textSize.coerceIn(50, 250) / 100f
+        fun setScaledSize(id: Int, baseSp: Float) {
+            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, baseSp * scale)
+        }
+        setScaledSize(R.id.widget_material_you_forecast_currentTemperature, 41f)
+        setScaledSize(R.id.widget_material_you_forecast_city, 15f)
+        setScaledSize(R.id.widget_material_you_forecast_weatherText, 13f)
+        setScaledSize(R.id.widget_split_forecast_date, 13f)
+        setScaledSize(R.id.widget_split_forecast_subtitle, 12f)
+
+        val forecastTextIds = listOf(
+            intArrayOf(
+                R.id.widget_material_you_forecast_hour_1, R.id.widget_material_you_forecast_hour_2,
+                R.id.widget_material_you_forecast_hour_3, R.id.widget_material_you_forecast_hour_4,
+                R.id.widget_material_you_forecast_hour_5
+            ) to 12f,
+            intArrayOf(
+                R.id.widget_material_you_forecast_hourlyTemperature_1,
+                R.id.widget_material_you_forecast_hourlyTemperature_2,
+                R.id.widget_material_you_forecast_hourlyTemperature_3,
+                R.id.widget_material_you_forecast_hourlyTemperature_4,
+                R.id.widget_material_you_forecast_hourlyTemperature_5
+            ) to 13f,
+            intArrayOf(
+                R.id.widget_material_you_forecast_week_1, R.id.widget_material_you_forecast_week_2,
+                R.id.widget_material_you_forecast_week_3, R.id.widget_material_you_forecast_week_4,
+                R.id.widget_material_you_forecast_week_5
+            ) to 12f,
+            intArrayOf(
+                R.id.widget_material_you_forecast_dayTemperature_1,
+                R.id.widget_material_you_forecast_dayTemperature_2,
+                R.id.widget_material_you_forecast_dayTemperature_3,
+                R.id.widget_material_you_forecast_dayTemperature_4,
+                R.id.widget_material_you_forecast_dayTemperature_5
+            ) to 11f,
+            intArrayOf(
+                R.id.widget_material_you_forecast_nightTemperature_1,
+                R.id.widget_material_you_forecast_nightTemperature_2,
+                R.id.widget_material_you_forecast_nightTemperature_3,
+                R.id.widget_material_you_forecast_nightTemperature_4,
+                R.id.widget_material_you_forecast_nightTemperature_5
+            ) to 11f,
+            intArrayOf(
+                R.id.widget_split_forecast_temp_separator_1, R.id.widget_split_forecast_temp_separator_2,
+                R.id.widget_split_forecast_temp_separator_3, R.id.widget_split_forecast_temp_separator_4,
+                R.id.widget_split_forecast_temp_separator_5
+            ) to 11f
+        )
+        forecastTextIds.forEach { (ids, baseSp) ->
+            ids.forEach { id -> setScaledSize(id, baseSp) }
+        }
+    }
     if (location != null) {
         val date = Date()
         views.setTextViewText(

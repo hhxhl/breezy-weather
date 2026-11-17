@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@android:id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="10dp"
-    android:background="@drawable/widget_m3_background"
     android:theme="@style/BreezyWeatherAndroidSWidget">
+
+    <!-- Keep the card independent from the forecast so transparency does not fade text/icons. -->
+    <ImageView
+        android:id="@+id/widget_split_forecast_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/widget_m3_background"
+        android:contentDescription="@null" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
     <!-- Left: current weather, date, and the original configurable subtitle. -->
     <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
@@ -29,12 +40,12 @@
             <TextView android:id="@+id/widget_material_you_forecast_city"
                 android:layout_width="wrap_content" android:layout_height="wrap_content"
                 android:maxWidth="72dp" android:textColor="?android:attr/textColorPrimary"
-                android:textSize="14sp" android:textStyle="bold" android:maxLines="1"
+                android:textSize="15sp" android:textStyle="bold" android:maxLines="1"
                 android:ellipsize="end" android:text="@string/widget_ellipsis" />
             <TextView android:id="@+id/widget_material_you_forecast_weatherText"
                 android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
                 android:layout_marginStart="6dp" android:textColor="?android:attr/textColorSecondary"
-                android:textSize="12sp" android:maxLines="1" android:ellipsize="end"
+                android:textSize="13sp" android:maxLines="1" android:ellipsize="end"
                 android:text="@string/widget_ellipsis" />
         </LinearLayout>
         <TextView android:layout_width="match_parent" android:layout_height="1dp"
@@ -42,12 +53,12 @@
             android:layout_marginTop="12dp" android:layout_marginBottom="10dp" />
         <TextView android:id="@+id/widget_split_forecast_date"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textColor="?android:attr/textColorPrimary" android:textSize="12sp"
+            android:textColor="?android:attr/textColorPrimary" android:textSize="13sp"
             android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
         <TextView android:id="@+id/widget_split_forecast_subtitle"
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:layout_marginTop="6dp" android:textColor="?android:attr/textColorSecondary"
-            android:textSize="11sp" android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
+            android:textSize="12sp" android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
     </LinearLayout>
 
     <TextView android:layout_width="1dp" android:layout_height="match_parent"
@@ -62,7 +73,7 @@
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_hour_1"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_hourlyIcon_1"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -70,14 +81,14 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_1"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_hour_2"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_hourlyIcon_2"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -85,14 +96,14 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_2"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_hour_3"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_hourlyIcon_3"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -100,14 +111,14 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_3"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_hour_4"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_hourlyIcon_4"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -115,14 +126,14 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_4"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_hour_5"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_hourlyIcon_5"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -130,7 +141,7 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_5"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
         </LinearLayout>
@@ -143,7 +154,7 @@
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_week_1"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_dayIcon_1"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -153,13 +164,13 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_1"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="/" android:textSize="10sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:id="@+id/widget_split_forecast_temp_separator_1" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_1"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
             </LinearLayout>
@@ -167,7 +178,7 @@
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_week_2"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_dayIcon_2"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -177,13 +188,13 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_2"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="/" android:textSize="10sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:id="@+id/widget_split_forecast_temp_separator_2" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_2"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
             </LinearLayout>
@@ -191,7 +202,7 @@
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_week_3"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_dayIcon_3"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -201,13 +212,13 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_3"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="/" android:textSize="10sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:id="@+id/widget_split_forecast_temp_separator_3" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_3"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
             </LinearLayout>
@@ -215,7 +226,7 @@
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_week_4"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_dayIcon_4"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -225,13 +236,13 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_4"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="/" android:textSize="10sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:id="@+id/widget_split_forecast_temp_separator_4" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_4"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
             </LinearLayout>
@@ -239,7 +250,7 @@
                 android:layout_weight="1" android:orientation="vertical" android:gravity="center">
                 <TextView android:id="@+id/widget_material_you_forecast_week_5"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
+                    android:textSize="12sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
                 <ImageView android:id="@+id/widget_material_you_forecast_dayIcon_5"
                     android:layout_width="22dp" android:layout_height="22dp"
@@ -249,16 +260,17 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_5"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorPrimary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="/" android:textSize="10sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:id="@+id/widget_split_forecast_temp_separator_5" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_5"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:textSize="10sp" android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
+</FrameLayout>

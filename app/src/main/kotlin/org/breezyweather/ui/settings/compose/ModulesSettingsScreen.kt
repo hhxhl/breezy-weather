@@ -52,6 +52,7 @@ import org.breezyweather.remoteviews.config.DayWeekWidgetConfigActivity
 import org.breezyweather.remoteviews.config.DayWidgetConfigActivity
 import org.breezyweather.remoteviews.config.HourlyTrendWidgetConfigActivity
 import org.breezyweather.remoteviews.config.MultiCityWidgetConfigActivity
+import org.breezyweather.remoteviews.config.SplitForecastWidgetConfigActivity
 import org.breezyweather.remoteviews.config.TextWidgetConfigActivity
 import org.breezyweather.remoteviews.config.WeekWidgetConfigActivity
 import org.breezyweather.remoteviews.presenters.ClockDayDetailsWidgetIMP
@@ -63,6 +64,7 @@ import org.breezyweather.remoteviews.presenters.DayWeekWidgetIMP
 import org.breezyweather.remoteviews.presenters.DayWidgetIMP
 import org.breezyweather.remoteviews.presenters.HourlyTrendWidgetIMP
 import org.breezyweather.remoteviews.presenters.MultiCityWidgetIMP
+import org.breezyweather.remoteviews.presenters.SplitForecastWidgetIMP
 import org.breezyweather.remoteviews.presenters.TextWidgetIMP
 import org.breezyweather.remoteviews.presenters.WeekWidgetIMP
 import org.breezyweather.remoteviews.presenters.notification.WidgetNotificationIMP
@@ -195,6 +197,9 @@ fun ModulesSettingsScreen(
                 }
                 if (DayWeekWidgetIMP.isInUse(context)) {
                     add(Pair(R.string.widget_day_week, DayWeekWidgetConfigActivity::class.java))
+                }
+                if (SplitForecastWidgetIMP.isInUse(context)) {
+                    add(Pair(R.string.widget_split_forecast, SplitForecastWidgetConfigActivity::class.java))
                 }
                 if (ClockDayHorizontalWidgetIMP.isInUse(context)) {
                     add(Pair(R.string.widget_clock_day_horizontal, ClockDayHorizontalWidgetConfigActivity::class.java))

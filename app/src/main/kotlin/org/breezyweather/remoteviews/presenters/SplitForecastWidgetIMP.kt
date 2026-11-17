@@ -33,15 +33,22 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         val config = getWidgetConfig(context, context.getString(R.string.sp_widget_split_forecast_setting))
         AppWidgetManager.getInstance(context).updateAppWidget(
             ComponentName(context, WidgetSplitForecastProvider::class.java),
-            getRemoteViews(context, location, config.hideSubtitle, config.subtitleData, pollenIndexSource)
+            getRemoteViews(
+                context, location, config.cardAlpha, config.textSize,
+                config.hideSubtitle, config.subtitleData, pollenIndexSource
+            )
         )
     }
 
     fun getRemoteViews(
         context: Context,
         location: Location?,
+        cardAlpha: Int,
+        textSize: Int,
         hideSubtitle: Boolean,
         subtitleData: String?,
         pollenIndexSource: PollenIndexSource?,
-    ): RemoteViews = buildSplitForecastViews(context, location, hideSubtitle, subtitleData, pollenIndexSource)
+    ): RemoteViews = buildSplitForecastViews(
+        context, location, cardAlpha, textSize, hideSubtitle, subtitleData, pollenIndexSource
+    )
 }

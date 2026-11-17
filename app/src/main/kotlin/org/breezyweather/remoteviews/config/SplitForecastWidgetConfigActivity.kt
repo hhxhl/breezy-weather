@@ -58,6 +58,8 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
 
     override fun initView() {
         super.initView()
+        mCardAlphaContainer?.visibility = View.VISIBLE
+        mTextSizeContainer?.visibility = View.VISIBLE
         mHideSubtitleContainer?.visibility = View.VISIBLE
         mSubtitleDataContainer?.visibility = View.VISIBLE
     }
@@ -74,7 +76,7 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
 
     override val remoteViews: RemoteViews
         get() = SplitForecastWidgetIMP.getRemoteViews(
-            this, locationNow, hideSubtitle, subtitleDataValueNow, pollenSource
+            this, locationNow, cardAlpha, textSize, hideSubtitle, subtitleDataValueNow, pollenSource
         )
 
     override val configStoreName: String
