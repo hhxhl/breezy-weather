@@ -1,0 +1,90 @@
+name: Build Weather Hhxhl
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_branch:
+        description: 'Branch to build'
+        required: true
+        default: 'main-hhxhl'
+      upload_name:
+        description: 'Artifact name'
+        required: false
+        default: 'weather-hhxhl'
+
+  push:
+    branches:
+      - main-hhxhl
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: >-
+      github.ref == 'refs/heads/main-hhxhl' &&
+      (
+        github.event_name == 'workflow_dispatch' ||
+        contains(github.event.head_commit.message, '[build]')
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.build_branch || github.ref_name }}
+          fetch-depth: 1
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version-file: .github/.java-version
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Assemble basic release
+        run: ./gradlew assembleBasicRelease
+
+      - name: Sign APKs
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/basic/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: 36.0.0
+
+      - name: Collect signed APKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          shopt -s nullglob
+
+          signed_apks=(app/build/outputs/apk/basic/release/*-signed.apk)
+
+          if [ ${#signed_apks[@]} -eq 0 ]; then
+            echo "ERROR: No signed APK found!"
+            ls -lah app/build/outputs/apk/basic/release || true
+            exit 1
+          fi
+
+          cp "${signed_apks[@]}" artifacts/
+          ls -lh artifacts
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.upload_name || github.ref_name }}-${{ github.run_number }}-${{ github.run_attempt }}
+          path: artifacts/*.apk
+          if-no-files-found: error
+          retention-days: 10
