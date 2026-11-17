@@ -22,19 +22,37 @@ import android.content.Context
 import android.widget.RemoteViews
 import breezyweather.domain.location.model.Location
 import org.breezyweather.R
+import org.breezyweather.domain.settings.ConfigStore
 import org.breezyweather.background.receiver.widget.WidgetSplitForecastProvider
 import org.breezyweather.common.source.PollenIndexSource
 
 object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
+    private const val APPEARANCE_INITIALIZED_KEY = "split_forecast_appearance_initialized"
+
+    /** The previous version saved 'none' / 'light' without exposing color settings.
+     *  Preserve the original Material You card when upgrading those widgets.
+     */
+    fun ensureAppearanceDefaults(context: Context) {
+        val store = ConfigStore(context, context.getString(R.string.sp_widget_split_forecast_setting))
+        if (!store.getBoolean(APPEARANCE_INITIALIZED_KEY, false)) {
+            store.edit()
+                .putString(context.getString(R.string.key_card_style), "auto")
+                .putString(context.getString(R.string.key_text_color), "dark")
+                .putBoolean(APPEARANCE_INITIALIZED_KEY, true)
+                .apply()
+        }
+    }
+
     fun isInUse(context: Context): Boolean = AppWidgetManager.getInstance(context)
         .getAppWidgetIds(ComponentName(context, WidgetSplitForecastProvider::class.java)).isNotEmpty()
 
     fun updateWidgetView(context: Context, location: Location?, pollenIndexSource: PollenIndexSource?) {
+        ensureAppearanceDefaults(context)
         val config = getWidgetConfig(context, context.getString(R.string.sp_widget_split_forecast_setting))
         AppWidgetManager.getInstance(context).updateAppWidget(
             ComponentName(context, WidgetSplitForecastProvider::class.java),
             getRemoteViews(
-                context, location, config.cardAlpha, config.textSize,
+                context, location, config.cardStyle, config.cardAlpha, config.textColor, config.textSize,
                 config.hideSubtitle, config.subtitleData, pollenIndexSource
             )
         )
@@ -43,12 +61,15 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
     fun getRemoteViews(
         context: Context,
         location: Location?,
+        cardStyle: String?,
         cardAlpha: Int,
+        textColor: String?,
         textSize: Int,
         hideSubtitle: Boolean,
         subtitleData: String?,
         pollenIndexSource: PollenIndexSource?,
     ): RemoteViews = buildSplitForecastViews(
-        context, location, cardAlpha, textSize, hideSubtitle, subtitleData, pollenIndexSource
+        context, location, cardStyle, cardAlpha, textColor, textSize,
+        hideSubtitle, subtitleData, pollenIndexSource
     )
 }

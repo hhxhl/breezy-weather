@@ -52,13 +52,20 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
 
     override fun initData() {
         super.initData()
+        SplitForecastWidgetIMP.ensureAppearanceDefaults(this)
+        // Use the existing widget card and text color options while preserving
+        // the split widget's original Material You background by default.
+        cardStyleValueNow = "auto"
+        textColorValueNow = "dark"
         // Existing subtitle options and parser; prefer alternate calendar if it is configured.
         subtitleDataValueNow = if (CalendarHelper.getAlternateCalendarSetting(this) != null) "lunar" else "time"
     }
 
     override fun initView() {
         super.initView()
+        mCardStyleContainer?.visibility = View.VISIBLE
         mCardAlphaContainer?.visibility = View.VISIBLE
+        mTextColorContainer?.visibility = View.VISIBLE
         mTextSizeContainer?.visibility = View.VISIBLE
         mHideSubtitleContainer?.visibility = View.VISIBLE
         mSubtitleDataContainer?.visibility = View.VISIBLE
@@ -76,7 +83,8 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
 
     override val remoteViews: RemoteViews
         get() = SplitForecastWidgetIMP.getRemoteViews(
-            this, locationNow, cardAlpha, textSize, hideSubtitle, subtitleDataValueNow, pollenSource
+            this, locationNow, cardStyleValueNow, cardAlpha, textColorValueNow,
+            textSize, hideSubtitle, subtitleDataValueNow, pollenSource
         )
 
     override val configStoreName: String
