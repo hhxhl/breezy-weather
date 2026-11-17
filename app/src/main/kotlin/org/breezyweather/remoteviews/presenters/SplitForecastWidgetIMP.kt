@@ -20,7 +20,6 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.Color
-import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import breezyweather.domain.location.model.Location
@@ -43,14 +42,9 @@ import org.breezyweather.ui.theme.resource.ResourceHelper
 import org.breezyweather.ui.theme.resource.ResourcesProviderFactory
 import org.breezyweather.unit.formatting.UnitWidth
 import java.util.Date
-import kotlin.math.min
 
 object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
     private const val APPEARANCE_INITIALIZED_KEY = "split_forecast_appearance_initialized"
-    const val KEY_CURRENT_TEMPERATURE_SP = "split_current_temperature_sp"
-    const val KEY_FORECAST_TEMPERATURE_PERCENT = "split_forecast_temperature_percent"
-    const val DEFAULT_CURRENT_TEMPERATURE_SP = 31
-    const val DEFAULT_FORECAST_TEMPERATURE_PERCENT = 100
 
     /** The previous version saved 'none' / 'light' without exposing color settings.
      *  Preserve the original Material You card when upgrading those widgets.
@@ -72,14 +66,11 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
     fun updateWidgetView(context: Context, location: Location?, pollenIndexSource: PollenIndexSource?) {
         ensureAppearanceDefaults(context)
         val config = getWidgetConfig(context, context.getString(R.string.sp_widget_split_forecast_setting))
-        val stored = ConfigStore(context, context.getString(R.string.sp_widget_split_forecast_setting))
         AppWidgetManager.getInstance(context).updateAppWidget(
             ComponentName(context, WidgetSplitForecastProvider::class.java),
             getRemoteViews(
-                context, location, config.cardStyle, config.cardAlpha, config.textColor, config.textSize,
-                config.hideSubtitle, config.subtitleData, pollenIndexSource,
-                stored.getInt(KEY_CURRENT_TEMPERATURE_SP, DEFAULT_CURRENT_TEMPERATURE_SP),
-                stored.getInt(KEY_FORECAST_TEMPERATURE_PERCENT, DEFAULT_FORECAST_TEMPERATURE_PERCENT)
+                context, location, config.cardStyle, config.cardAlpha, config.textColor,
+                config.hideSubtitle, config.subtitleData, pollenIndexSource
             )
         )
     }
@@ -91,12 +82,9 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         cardStyle: String?,
         cardAlpha: Int,
         textColor: String?,
-        textSize: Int,
         hideSubtitle: Boolean,
         subtitleData: String?,
         pollenIndexSource: PollenIndexSource?,
-        currentTemperatureSp: Int = DEFAULT_CURRENT_TEMPERATURE_SP,
-        forecastTemperaturePercent: Int = DEFAULT_FORECAST_TEMPERATURE_PERCENT,
     ): RemoteViews {
         val color = AbstractRemoteViewsPresenter.WidgetColor(
             context, cardStyle ?: "auto", textColor ?: "dark", location?.isDaylight ?: true
@@ -116,7 +104,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             views.setViewVisibility(R.id.widget_split_forecast_card, View.GONE)
         }
 
-        applyAppearance(views, context, location, color, textSize, currentTemperatureSp, forecastTemperaturePercent)
+        applyAppearance(views, color)
         applyAirQuality(views, context, location, pollenIndexSource)
 
         if (location != null) {
@@ -173,12 +161,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
 
     private fun applyAppearance(
         views: RemoteViews,
-        context: Context,
-        location: Location?,
         color: AbstractRemoteViewsPresenter.WidgetColor,
-        textSize: Int,
-        currentTemperatureSp: Int,
-        forecastTemperaturePercent: Int,
     ) {
         val primary = color.textColor
         val secondary = Color.argb(
@@ -221,72 +204,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             R.id.widget_split_forecast_temp_separator_5
         )
         secondaryIds.forEach { views.setTextColor(it, secondary) }
-
-
-        // The existing widget-wide text size controls labels, city, AQI and subtitle.
-        // The two additional sliders independently control only the temperatures.
-        val textScale = textSize.coerceIn(50, 250) / 100f
-        val forecastScale = forecastTemperaturePercent.coerceIn(80, 130) / 100f
-        fun setSize(id: Int, sp: Float) {
-            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, sp)
-        }
-        setSize(R.id.widget_material_you_forecast_city, 13f * textScale)
-        setSize(R.id.widget_material_you_forecast_weatherText, 12f * textScale)
-        setSize(R.id.widget_split_forecast_air_quality, 12f * textScale)
-        setSize(R.id.widget_split_forecast_date, 12f * textScale)
-        setSize(R.id.widget_split_forecast_subtitle, 12f * textScale)
-
-        // Small, fixed-width icon + narrow number column. Reduce only long values,
-        // such as -10°, to avoid ellipsis while keeping 7° at the selected size.
-        val requestedSp = currentTemperatureSp.coerceIn(22, 38).toFloat()
-        val currentValue = location?.weather?.current?.temperature?.temperature?.formatMeasure(
-            context, SettingsManager.getInstance(context).getTemperatureUnit(context),
-            valueWidth = UnitWidth.NARROW, unitWidth = UnitWidth.NARROW
-        )?.toString().orEmpty()
-        val safeSp = when {
-            currentValue.length >= 5 -> min(requestedSp, 22f)
-            currentValue.length >= 4 -> min(requestedSp, 25f)
-            currentValue.length >= 3 -> min(requestedSp, 29f)
-            else -> requestedSp
-        }
-        setSize(R.id.widget_material_you_forecast_currentTemperature, safeSp)
-
-        val timeAndWeekIds = intArrayOf(
-            R.id.widget_material_you_forecast_hour_1, R.id.widget_material_you_forecast_hour_2,
-            R.id.widget_material_you_forecast_hour_3, R.id.widget_material_you_forecast_hour_4,
-            R.id.widget_material_you_forecast_hour_5,
-            R.id.widget_material_you_forecast_week_1, R.id.widget_material_you_forecast_week_2,
-            R.id.widget_material_you_forecast_week_3, R.id.widget_material_you_forecast_week_4,
-            R.id.widget_material_you_forecast_week_5
-        )
-        timeAndWeekIds.forEach { setSize(it, 12f * textScale) }
-
-        val hours = intArrayOf(
-            R.id.widget_material_you_forecast_hourlyTemperature_1,
-            R.id.widget_material_you_forecast_hourlyTemperature_2,
-            R.id.widget_material_you_forecast_hourlyTemperature_3,
-            R.id.widget_material_you_forecast_hourlyTemperature_4,
-            R.id.widget_material_you_forecast_hourlyTemperature_5
-        )
-        hours.forEach { setSize(it, 13f * forecastScale) }
-        val dailyTemps = intArrayOf(
-            R.id.widget_material_you_forecast_dayTemperature_1,
-            R.id.widget_material_you_forecast_dayTemperature_2,
-            R.id.widget_material_you_forecast_dayTemperature_3,
-            R.id.widget_material_you_forecast_dayTemperature_4,
-            R.id.widget_material_you_forecast_dayTemperature_5,
-            R.id.widget_material_you_forecast_nightTemperature_1,
-            R.id.widget_material_you_forecast_nightTemperature_2,
-            R.id.widget_material_you_forecast_nightTemperature_3,
-            R.id.widget_material_you_forecast_nightTemperature_4,
-            R.id.widget_material_you_forecast_nightTemperature_5,
-            R.id.widget_split_forecast_temp_separator_1,
-            R.id.widget_split_forecast_temp_separator_2,
-            R.id.widget_split_forecast_temp_separator_3,
-            R.id.widget_split_forecast_temp_separator_4,
-            R.id.widget_split_forecast_temp_separator_5
-        )
-        dailyTemps.forEach { setSize(it, 11f * forecastScale) }
+        // XML defines the fixed label/forecast sizes and AutoSize for the current temperature.
     }
 
     private fun buildForecastViews(

@@ -448,7 +448,8 @@ abstract class AbstractWidgetConfigActivity : BreezyActivity() {
 
         val doneButton = findViewById<Button>(R.id.activity_widget_config_doneButton)
         doneButton.setOnClickListener {
-            val editor = ConfigStore(this, configStoreName!!).edit()
+            ConfigStore(this, configStoreName!!)
+                .edit()
                 .putString(getString(R.string.key_view_type), viewTypeValueNow)
                 .putString(getString(R.string.key_card_style), cardStyleValueNow)
                 .putInt(getString(R.string.key_card_alpha), cardAlpha)
@@ -459,8 +460,7 @@ abstract class AbstractWidgetConfigActivity : BreezyActivity() {
                 .putString(getString(R.string.key_clock_font), clockFontValueNow)
                 .putBoolean(getString(R.string.key_hide_alternate_calendar), hideAlternateCalendar)
                 .putBoolean(getString(R.string.key_align_end), alignEnd)
-            saveAdditionalWidgetConfig(editor)
-            editor.apply()
+                .apply()
             val intent = intent
             val extras = intent.extras
             var appWidgetId = 0
@@ -516,9 +516,6 @@ abstract class AbstractWidgetConfigActivity : BreezyActivity() {
             setBottomSheetState(isCustomSubtitle)
         }
     }
-
-    /** Subclasses can save widget-specific settings in the same transaction. */
-    protected open fun saveAdditionalWidgetConfig(editor: ConfigStore.Editor) = Unit
 
     abstract fun updateWidgetView()
 
