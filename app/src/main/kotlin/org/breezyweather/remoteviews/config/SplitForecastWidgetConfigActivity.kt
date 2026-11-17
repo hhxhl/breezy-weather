@@ -66,6 +66,7 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
         mCardStyleContainer?.visibility = View.VISIBLE
         mCardAlphaContainer?.visibility = View.VISIBLE
         mTextColorContainer?.visibility = View.VISIBLE
+        mTextSizeContainer?.visibility = View.VISIBLE
         mHideSubtitleContainer?.visibility = View.VISIBLE
         mSubtitleDataContainer?.visibility = View.VISIBLE
     }
@@ -82,7 +83,7 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
 
     override val remoteViews: RemoteViews
         get() = SplitForecastWidgetIMP.getRemoteViews(
-            this, locationNow, cardStyleValueNow, cardAlpha, textColorValueNow,
+            this, locationNow, cardStyleValueNow, cardAlpha, textColorValueNow, textSize,
             hideSubtitle, subtitleDataValueNow, pollenSource
         )
 

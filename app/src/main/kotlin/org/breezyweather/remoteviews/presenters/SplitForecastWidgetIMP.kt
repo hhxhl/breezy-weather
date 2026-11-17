@@ -20,6 +20,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import breezyweather.domain.location.model.Location
@@ -69,7 +70,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         AppWidgetManager.getInstance(context).updateAppWidget(
             ComponentName(context, WidgetSplitForecastProvider::class.java),
             getRemoteViews(
-                context, location, config.cardStyle, config.cardAlpha, config.textColor,
+                context, location, config.cardStyle, config.cardAlpha, config.textColor, config.textSize,
                 config.hideSubtitle, config.subtitleData, pollenIndexSource
             )
         )
@@ -82,6 +83,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         cardStyle: String?,
         cardAlpha: Int,
         textColor: String?,
+        textSize: Int,
         hideSubtitle: Boolean,
         subtitleData: String?,
         pollenIndexSource: PollenIndexSource?,
@@ -104,7 +106,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             views.setViewVisibility(R.id.widget_split_forecast_card, View.GONE)
         }
 
-        applyAppearance(views, color)
+        applyAppearance(views, color, textSize)
         applyAirQuality(views, context, location, pollenIndexSource)
 
         if (location != null) {
@@ -162,6 +164,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
     private fun applyAppearance(
         views: RemoteViews,
         color: AbstractRemoteViewsPresenter.WidgetColor,
+        textSize: Int,
     ) {
         val primary = color.textColor
         val secondary = Color.argb(
@@ -204,7 +207,59 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             R.id.widget_split_forecast_temp_separator_5
         )
         secondaryIds.forEach { views.setTextColor(it, secondary) }
-        // XML defines the fixed label/forecast sizes and AutoSize for the current temperature.
+
+        // Reuse Breezy Weather's original widget-wide text size percentage.
+        // Keep the current large temperature on its XML AutoSize (20-36sp) so it
+        // can shrink to fit narrow columns and negative temperatures.
+        val scale = textSize.coerceIn(50, 250) / 100f
+        fun scaleText(id: Int, baseSp: Float) {
+            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, baseSp * scale)
+        }
+        scaleText(R.id.widget_material_you_forecast_city, 13f)
+        scaleText(R.id.widget_material_you_forecast_weatherText, 12f)
+        scaleText(R.id.widget_split_forecast_air_quality, 12f)
+        scaleText(R.id.widget_split_forecast_date, 12f)
+        scaleText(R.id.widget_split_forecast_subtitle, 12f)
+
+        val labelIds = intArrayOf(
+            R.id.widget_material_you_forecast_hour_1,
+            R.id.widget_material_you_forecast_hour_2,
+            R.id.widget_material_you_forecast_hour_3,
+            R.id.widget_material_you_forecast_hour_4,
+            R.id.widget_material_you_forecast_hour_5,
+            R.id.widget_material_you_forecast_week_1,
+            R.id.widget_material_you_forecast_week_2,
+            R.id.widget_material_you_forecast_week_3,
+            R.id.widget_material_you_forecast_week_4,
+            R.id.widget_material_you_forecast_week_5
+        )
+        labelIds.forEach { scaleText(it, 12f) }
+        val hourlyTemperatures = intArrayOf(
+            R.id.widget_material_you_forecast_hourlyTemperature_1,
+            R.id.widget_material_you_forecast_hourlyTemperature_2,
+            R.id.widget_material_you_forecast_hourlyTemperature_3,
+            R.id.widget_material_you_forecast_hourlyTemperature_4,
+            R.id.widget_material_you_forecast_hourlyTemperature_5
+        )
+        hourlyTemperatures.forEach { scaleText(it, 13f) }
+        val dailyTemperatures = intArrayOf(
+            R.id.widget_material_you_forecast_dayTemperature_1,
+            R.id.widget_material_you_forecast_dayTemperature_2,
+            R.id.widget_material_you_forecast_dayTemperature_3,
+            R.id.widget_material_you_forecast_dayTemperature_4,
+            R.id.widget_material_you_forecast_dayTemperature_5,
+            R.id.widget_material_you_forecast_nightTemperature_1,
+            R.id.widget_material_you_forecast_nightTemperature_2,
+            R.id.widget_material_you_forecast_nightTemperature_3,
+            R.id.widget_material_you_forecast_nightTemperature_4,
+            R.id.widget_material_you_forecast_nightTemperature_5,
+            R.id.widget_split_forecast_temp_separator_1,
+            R.id.widget_split_forecast_temp_separator_2,
+            R.id.widget_split_forecast_temp_separator_3,
+            R.id.widget_split_forecast_temp_separator_4,
+            R.id.widget_split_forecast_temp_separator_5
+        )
+        dailyTemperatures.forEach { scaleText(it, 11f) }
     }
 
     private fun buildForecastViews(
