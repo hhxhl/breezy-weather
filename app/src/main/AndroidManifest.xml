@@ -242,6 +242,14 @@
         </activity>
 
         <activity
+            android:name=".remoteviews.config.SplitForecastWidgetConfigActivity"
+            android:theme="@style/BreezyWeatherTheme"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".remoteviews.config.DayWeekWidgetConfigActivity"
             android:theme="@style/BreezyWeatherTheme"
             android:exported="true">
@@ -367,6 +375,18 @@
             android:exported="false" />
 
         <!-- widget -->
+        <receiver
+            android:name=".background.receiver.widget.WidgetSplitForecastProvider"
+            android:label="@string/widget_split_forecast"
+            android:exported="true">
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_split_forecast" />
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.ACTION_APPWIDGET_DISABLED" />
+            </intent-filter>
+        </receiver>
         <receiver
             android:name=".background.receiver.widget.WidgetMaterialYouForecastProvider"
             android:label="@string/widget_material_you_forecast"

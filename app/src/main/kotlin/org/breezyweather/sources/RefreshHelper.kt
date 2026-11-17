@@ -91,6 +91,7 @@ import org.breezyweather.remoteviews.presenters.DayWidgetIMP
 import org.breezyweather.remoteviews.presenters.HourlyTrendWidgetIMP
 import org.breezyweather.remoteviews.presenters.MaterialYouCurrentWidgetIMP
 import org.breezyweather.remoteviews.presenters.MaterialYouForecastWidgetIMP
+import org.breezyweather.remoteviews.presenters.SplitForecastWidgetIMP
 import org.breezyweather.remoteviews.presenters.MultiCityWidgetIMP
 import org.breezyweather.remoteviews.presenters.TextWidgetIMP
 import org.breezyweather.remoteviews.presenters.WeekWidgetIMP
@@ -1106,6 +1107,15 @@ class RefreshHelper @Inject constructor(
         }
         if (MaterialYouForecastWidgetIMP.isEnabled(context)) {
             MaterialYouForecastWidgetIMP.updateWidgetView(context, locationList[0])
+        }
+        if (SplitForecastWidgetIMP.isInUse(context)) {
+            SplitForecastWidgetIMP.updateWidgetView(
+                context,
+                locationList[0],
+                sourceManager.getPollenIndexSource(
+                    (locationList[0].pollenSource ?: "").ifEmpty { locationList[0].forecastSource }
+                )
+            )
         }
         if (MaterialYouCurrentWidgetIMP.isEnabled(context)) {
             MaterialYouCurrentWidgetIMP.updateWidgetView(context, locationList[0])

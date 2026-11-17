@@ -3,6 +3,7 @@
     <!-- Preferences -->
     <string name="sp_widget_day_setting" translatable="false">widget_day_setting</string>
     <string name="sp_widget_week_setting" translatable="false">widget_week_setting</string>
+    <string name="sp_widget_split_forecast_setting" translatable="false">widget_split_forecast_setting</string>
     <string name="sp_widget_day_week_setting" translatable="false">widget_day_week_setting</string>
     <string name="sp_widget_clock_day_horizontal_setting" translatable="false">widget_clock_day_horizontal_setting</string>
     <string name="sp_widget_clock_day_details_setting" translatable="false">widget_clock_day_details_setting</string>

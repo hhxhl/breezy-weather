@@ -395,7 +395,7 @@ object DayWeekWidgetIMP : AbstractRemoteViewsPresenter() {
         }
     }
 
-    private fun getTimeText(
+    internal fun getTimeText(
         context: Context,
         location: Location,
         viewStyle: String?,
@@ -406,6 +406,7 @@ object DayWeekWidgetIMP : AbstractRemoteViewsPresenter() {
         val weather = location.weather ?: return null
         return when (subtitleData) {
             "time" -> when (viewStyle) {
+                "split" -> weather.base.refreshTime?.getFormattedTime(location, context, context.is12Hour)
                 "rectangle" -> location.getPlace(context) +
                     " " +
                     (weather.base.refreshTime?.getFormattedTime(location, context, context.is12Hour) ?: "")
@@ -435,6 +436,7 @@ object DayWeekWidgetIMP : AbstractRemoteViewsPresenter() {
             }
             "wind" -> weather.current?.wind?.getShortDescription(context)
             "lunar" -> when (viewStyle) {
+                "split" -> Date().getFormattedMediumDayAndMonthInAdditionalCalendar(location, context)
                 "rectangle" -> location.getPlace(context) +
                     " " +
                     Date().getFormattedMediumDayAndMonthInAdditionalCalendar(location, context)

@@ -102,6 +102,8 @@ object Widgets {
     // material you.
     const val MATERIAL_YOU_FORECAST_PENDING_INTENT_CODE_WEATHER = 131
     const val MATERIAL_YOU_CURRENT_PENDING_INTENT_CODE_WEATHER = 132
+    const val SPLIT_FORECAST_PENDING_INTENT_CODE_WEATHER = 141
+    const val SPLIT_FORECAST_PENDING_INTENT_CODE_CALENDAR = 142
 
     fun buildWidgetDayStyleText(context: Context, weather: Weather, temperatureUnit: TemperatureUnit): Array<String> {
         val texts = arrayOf(
