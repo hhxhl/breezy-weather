@@ -20,44 +20,52 @@
         android:orientation="horizontal"
         android:padding="10dp">
 
-    <!-- Left: current weather, date, and the original configurable subtitle. -->
+    <!-- Left: compact vertical summary, using the same original weather/subtitle views. -->
     <LinearLayout android:layout_width="0dp" android:layout_height="match_parent"
         android:layout_weight="2.65" android:gravity="center_vertical" android:orientation="vertical"
         android:paddingStart="5dp" android:paddingEnd="7dp">
+        <!-- City -->
+        <TextView android:id="@+id/widget_material_you_forecast_city"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textSize="15sp" android:textStyle="normal" android:maxLines="1"
+            android:ellipsize="end" android:text="@string/widget_ellipsis" />
+        <!-- Current temperature -->
+        <TextView android:id="@+id/widget_material_you_forecast_currentTemperature"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="1dp" android:text="@string/widget_ellipsis"
+            android:textColor="?android:attr/textColorPrimary" android:textSize="34sp"
+            android:fontFamily="sans-serif" android:includeFontPadding="false" />
+        <!-- Weather icon + condition text -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:gravity="center_vertical" android:orientation="horizontal">
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginTop="2dp">
             <ImageView android:id="@+id/widget_material_you_forecast_currentIcon"
-                android:layout_width="38dp" android:layout_height="38dp"
+                android:layout_width="23dp" android:layout_height="23dp"
                 android:src="@drawable/weather_cloudy" android:contentDescription="@null" />
-            <TextView android:id="@+id/widget_material_you_forecast_currentTemperature"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_marginStart="4dp" android:text="@string/widget_ellipsis"
-                android:textColor="?android:attr/textColorPrimary" android:textSize="36sp"
-                android:fontFamily="sans-serif" android:includeFontPadding="false" />
-        </LinearLayout>
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:orientation="horizontal" android:layout_marginTop="6dp" android:gravity="center_vertical">
-            <TextView android:id="@+id/widget_material_you_forecast_city"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:maxWidth="72dp" android:textColor="?android:attr/textColorPrimary"
-                android:textSize="15sp" android:textStyle="normal" android:maxLines="1"
-                android:ellipsize="end" android:text="@string/widget_ellipsis" />
             <TextView android:id="@+id/widget_material_you_forecast_weatherText"
                 android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
                 android:layout_marginStart="6dp" android:textColor="?android:attr/textColorSecondary"
-                android:textSize="13sp" android:maxLines="1" android:ellipsize="end"
+                android:textSize="14sp" android:maxLines="1" android:ellipsize="end"
                 android:text="@string/widget_ellipsis" />
         </LinearLayout>
+        <!-- Air quality: hide completely when the provider has no AQI. -->
+        <TextView android:id="@+id/widget_split_forecast_air_quality"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="3dp" android:textColor="?android:attr/textColorSecondary"
+            android:textSize="12sp" android:maxLines="1" android:ellipsize="end"
+            android:visibility="gone" />
         <TextView android:layout_width="match_parent" android:layout_height="1dp"
             android:background="?android:attr/textColorSecondary" android:alpha="0.18"
-            android:layout_marginTop="12dp" android:layout_marginBottom="10dp" />
+            android:layout_marginTop="7dp" android:layout_marginBottom="7dp" />
+        <!-- Date + the existing user-configurable subtitle. -->
         <TextView android:id="@+id/widget_split_forecast_date"
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:textColor="?android:attr/textColorPrimary" android:textSize="13sp"
             android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
         <TextView android:id="@+id/widget_split_forecast_subtitle"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="6dp" android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="4dp" android:textColor="?android:attr/textColorSecondary"
             android:textSize="12sp" android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
     </LinearLayout>
 

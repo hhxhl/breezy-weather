@@ -19,10 +19,8 @@ package org.breezyweather.remoteviews.presenters
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.util.SizeF
-import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.LayoutRes
@@ -30,11 +28,8 @@ import breezyweather.domain.location.model.Location
 import org.breezyweather.R
 import org.breezyweather.background.receiver.widget.WidgetMaterialYouForecastProvider
 import org.breezyweather.common.extensions.formatMeasure
-import org.breezyweather.common.extensions.getFormattedMediumDayAndMonth
 import org.breezyweather.common.extensions.getHour
-import org.breezyweather.common.extensions.getWeek
 import org.breezyweather.common.options.NotificationTextColor
-import org.breezyweather.common.source.PollenIndexSource
 import org.breezyweather.domain.location.model.getPlace
 import org.breezyweather.domain.location.model.isDaylight
 import org.breezyweather.domain.settings.SettingsManager
@@ -46,7 +41,6 @@ import org.breezyweather.remoteviews.Widgets
 import org.breezyweather.ui.theme.resource.ResourceHelper
 import org.breezyweather.ui.theme.resource.ResourcesProviderFactory
 import org.breezyweather.unit.formatting.UnitWidth
-import java.util.Date
 
 class MaterialYouForecastWidgetIMP : AbstractRemoteViewsPresenter() {
 
@@ -129,177 +123,12 @@ private fun buildWeatherWidget(
     buildRemoteViews(context, location, R.layout.widget_material_you_forecast_4x3)
 }
 
-/** Uses the same weather/forecast binding as Material You, with one original configurable subtitle. */
-internal fun buildSplitForecastViews(
-    context: Context,
-    location: Location?,
-    cardStyle: String?,
-    cardAlpha: Int,
-    textColor: String?,
-    textSize: Int,
-    hideSubtitle: Boolean,
-    subtitleData: String?,
-    pollenIndexSource: PollenIndexSource?,
-): RemoteViews {
-    // Match the original widget background/text color settings and keep their logic shared.
-    val color = AbstractRemoteViewsPresenter.WidgetColor(
-        context, cardStyle ?: "auto", textColor ?: "dark", location?.isDaylight ?: true
-    )
-    val views = buildRemoteViews(
-        context, location, R.layout.widget_split_forecast, color.minimalIconColor
-    )
-    if (color.showCard) {
-        // Keep the Material You surface for the app-following option, as before.
-        views.setImageViewResource(
-            R.id.widget_split_forecast_card,
-            if (cardStyle == null || cardStyle == "auto") R.drawable.widget_m3_background
-            else AbstractRemoteViewsPresenter.getCardBackgroundId(color)
-        )
-        views.setInt(R.id.widget_split_forecast_card, "setImageAlpha", (cardAlpha.coerceIn(0, 100) * 255) / 100)
-    } else {
-        views.setViewVisibility(R.id.widget_split_forecast_card, View.GONE)
-    }
-
-    // Keep hierarchy through alpha rather than bold text; apply the configured text color to all fields.
-    val primary = color.textColor
-    val secondary = Color.argb(
-        (Color.alpha(primary) * 0.70f).toInt(),
-        Color.red(primary), Color.green(primary), Color.blue(primary)
-    )
-    val primaryIds = intArrayOf(
-        R.id.widget_material_you_forecast_currentTemperature,
-        R.id.widget_material_you_forecast_city,
-        R.id.widget_split_forecast_date,
-        R.id.widget_material_you_forecast_hour_1,
-        R.id.widget_material_you_forecast_hour_2,
-        R.id.widget_material_you_forecast_hour_3,
-        R.id.widget_material_you_forecast_hour_4,
-        R.id.widget_material_you_forecast_hour_5,
-        R.id.widget_material_you_forecast_hourlyTemperature_1,
-        R.id.widget_material_you_forecast_hourlyTemperature_2,
-        R.id.widget_material_you_forecast_hourlyTemperature_3,
-        R.id.widget_material_you_forecast_hourlyTemperature_4,
-        R.id.widget_material_you_forecast_hourlyTemperature_5,
-        R.id.widget_material_you_forecast_week_1,
-        R.id.widget_material_you_forecast_week_2,
-        R.id.widget_material_you_forecast_week_3,
-        R.id.widget_material_you_forecast_week_4,
-        R.id.widget_material_you_forecast_week_5,
-        R.id.widget_material_you_forecast_dayTemperature_1,
-        R.id.widget_material_you_forecast_dayTemperature_2,
-        R.id.widget_material_you_forecast_dayTemperature_3,
-        R.id.widget_material_you_forecast_dayTemperature_4,
-        R.id.widget_material_you_forecast_dayTemperature_5
-    )
-    primaryIds.forEach { views.setTextColor(it, primary) }
-    val secondaryIds = intArrayOf(
-        R.id.widget_material_you_forecast_weatherText,
-        R.id.widget_split_forecast_subtitle,
-        R.id.widget_material_you_forecast_nightTemperature_1,
-        R.id.widget_material_you_forecast_nightTemperature_2,
-        R.id.widget_material_you_forecast_nightTemperature_3,
-        R.id.widget_material_you_forecast_nightTemperature_4,
-        R.id.widget_material_you_forecast_nightTemperature_5,
-        R.id.widget_split_forecast_temp_separator_1,
-        R.id.widget_split_forecast_temp_separator_2,
-        R.id.widget_split_forecast_temp_separator_3,
-        R.id.widget_split_forecast_temp_separator_4,
-        R.id.widget_split_forecast_temp_separator_5
-    )
-    secondaryIds.forEach { views.setTextColor(it, secondary) }
-    if (textSize != 100) {
-        // Use the same percentage-based sizing as existing configurable widgets.
-        // These base sizes match the split widget XML, keeping 100% unchanged.
-        val scale = textSize.coerceIn(50, 250) / 100f
-        fun setScaledSize(id: Int, baseSp: Float) {
-            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, baseSp * scale)
-        }
-        setScaledSize(R.id.widget_material_you_forecast_currentTemperature, 36f)
-        setScaledSize(R.id.widget_material_you_forecast_city, 15f)
-        setScaledSize(R.id.widget_material_you_forecast_weatherText, 13f)
-        setScaledSize(R.id.widget_split_forecast_date, 13f)
-        setScaledSize(R.id.widget_split_forecast_subtitle, 12f)
-
-        val forecastTextIds = listOf(
-            intArrayOf(
-                R.id.widget_material_you_forecast_hour_1, R.id.widget_material_you_forecast_hour_2,
-                R.id.widget_material_you_forecast_hour_3, R.id.widget_material_you_forecast_hour_4,
-                R.id.widget_material_you_forecast_hour_5
-            ) to 12f,
-            intArrayOf(
-                R.id.widget_material_you_forecast_hourlyTemperature_1,
-                R.id.widget_material_you_forecast_hourlyTemperature_2,
-                R.id.widget_material_you_forecast_hourlyTemperature_3,
-                R.id.widget_material_you_forecast_hourlyTemperature_4,
-                R.id.widget_material_you_forecast_hourlyTemperature_5
-            ) to 13f,
-            intArrayOf(
-                R.id.widget_material_you_forecast_week_1, R.id.widget_material_you_forecast_week_2,
-                R.id.widget_material_you_forecast_week_3, R.id.widget_material_you_forecast_week_4,
-                R.id.widget_material_you_forecast_week_5
-            ) to 12f,
-            intArrayOf(
-                R.id.widget_material_you_forecast_dayTemperature_1,
-                R.id.widget_material_you_forecast_dayTemperature_2,
-                R.id.widget_material_you_forecast_dayTemperature_3,
-                R.id.widget_material_you_forecast_dayTemperature_4,
-                R.id.widget_material_you_forecast_dayTemperature_5
-            ) to 11f,
-            intArrayOf(
-                R.id.widget_material_you_forecast_nightTemperature_1,
-                R.id.widget_material_you_forecast_nightTemperature_2,
-                R.id.widget_material_you_forecast_nightTemperature_3,
-                R.id.widget_material_you_forecast_nightTemperature_4,
-                R.id.widget_material_you_forecast_nightTemperature_5
-            ) to 11f,
-            intArrayOf(
-                R.id.widget_split_forecast_temp_separator_1, R.id.widget_split_forecast_temp_separator_2,
-                R.id.widget_split_forecast_temp_separator_3, R.id.widget_split_forecast_temp_separator_4,
-                R.id.widget_split_forecast_temp_separator_5
-            ) to 11f
-        )
-        forecastTextIds.forEach { (ids, baseSp) ->
-            ids.forEach { id -> setScaledSize(id, baseSp) }
-        }
-    }
-    if (location != null) {
-        val date = Date()
-        views.setTextViewText(
-            R.id.widget_split_forecast_date,
-            date.getFormattedMediumDayAndMonth(location, context) + " " + date.getWeek(location, context)
-        )
-        views.setTextViewText(
-            R.id.widget_split_forecast_subtitle,
-            DayWeekWidgetIMP.getTimeText(
-                context,
-                location,
-                "split",
-                subtitleData,
-                SettingsManager.getInstance(context).getTemperatureUnit(context),
-                pollenIndexSource
-            )
-        )
-        if (subtitleData == "lunar") {
-            views.setOnClickPendingIntent(
-                R.id.widget_split_forecast_subtitle,
-                AbstractRemoteViewsPresenter.getCalendarPendingIntent(
-                    context, Widgets.SPLIT_FORECAST_PENDING_INTENT_CODE_CALENDAR
-                )
-            )
-        }
-    }
-    views.setViewVisibility(R.id.widget_split_forecast_subtitle, if (hideSubtitle) View.GONE else View.VISIBLE)
-    return views
-}
-
 private fun buildRemoteViews(
     context: Context,
     location: Location?,
     @LayoutRes layoutId: Int,
-    splitIconColor: NotificationTextColor = NotificationTextColor.GREY,
 ): RemoteViews {
     val views = RemoteViews(context.packageName, layoutId)
-    val split = layoutId == R.layout.widget_split_forecast
 
     val weather = location?.weather ?: return views
     val dayTime = location.isDaylight
@@ -321,8 +150,8 @@ private fun buildRemoteViews(
                 provider,
                 it,
                 dayTime,
-                split && SettingsManager.getInstance(context).isWidgetUsingMonochromeIcons,
-                if (split) splitIconColor else NotificationTextColor.LIGHT
+                false,
+                NotificationTextColor.LIGHT
             )
         )
     } ?: views.setViewVisibility(R.id.widget_material_you_forecast_currentIcon, View.INVISIBLE)
@@ -337,33 +166,31 @@ private fun buildRemoteViews(
                 unitWidth = UnitWidth.NARROW
             )
         )
-        if (!split) {
-            setTextViewText(
-                R.id.widget_material_you_forecast_daytimeTemperature,
-                weather.today?.day?.temperature?.temperature?.formatMeasure(
-                    context,
-                    temperatureUnit,
-                    valueWidth = UnitWidth.NARROW,
-                    unitWidth = UnitWidth.NARROW
-                )
+        setTextViewText(
+            R.id.widget_material_you_forecast_daytimeTemperature,
+            weather.today?.day?.temperature?.temperature?.formatMeasure(
+                context,
+                temperatureUnit,
+                valueWidth = UnitWidth.NARROW,
+                unitWidth = UnitWidth.NARROW
             )
-            setTextViewText(
-                R.id.widget_material_you_forecast_nighttimeTemperature,
-                weather.today?.night?.temperature?.temperature?.formatMeasure(
-                    context,
-                    temperatureUnit,
-                    valueWidth = UnitWidth.NARROW,
-                    unitWidth = UnitWidth.NARROW
-                )
+        )
+        setTextViewText(
+            R.id.widget_material_you_forecast_nighttimeTemperature,
+            weather.today?.night?.temperature?.temperature?.formatMeasure(
+                context,
+                temperatureUnit,
+                valueWidth = UnitWidth.NARROW,
+                unitWidth = UnitWidth.NARROW
             )
-        }
+        )
         setTextViewText(
             R.id.widget_material_you_forecast_weatherText,
             weather.current?.weatherText
         )
     }
 
-    if (!split) views.setTextViewText(
+    views.setTextViewText(
         R.id.widget_material_you_forecast_aqiOrWind,
         weather.current?.let { current ->
             if (current.airQuality?.isIndexValid == true) {
@@ -412,27 +239,24 @@ private fun buildRemoteViews(
         )
     )
     // Loop through next 6 hours
-    hourlyIds.take(if (split) 5 else 6).forEachIndexed { i, hourlyId ->
-        // Use 2-hour steps in the split layout to cover the coming part of the day.
-        val forecastIndex = if (split) i * 2 else i
-        val hourly = weather.nextHourlyForecast.getOrNull(forecastIndex)
-        views.setTextViewText(hourlyId[0], hourly?.date?.getHour(location, context))
-        hourly?.weatherCode?.let {
+    hourlyIds.forEachIndexed { i, hourlyId ->
+        views.setTextViewText(hourlyId[0], weather.nextHourlyForecast.getOrNull(i)?.date?.getHour(location, context))
+        weather.nextHourlyForecast.getOrNull(i)?.weatherCode?.let {
             views.setViewVisibility(hourlyId[1], View.VISIBLE)
             views.setImageViewUri(
                 hourlyId[1],
                 ResourceHelper.getWidgetNotificationIconUri(
                     provider,
                     it,
-                    hourly?.isDaylight ?: dayTime,
-                    split && SettingsManager.getInstance(context).isWidgetUsingMonochromeIcons,
-                    if (split) splitIconColor else NotificationTextColor.LIGHT
+                    weather.nextHourlyForecast[i].isDaylight,
+                    false,
+                    NotificationTextColor.LIGHT
                 )
             )
         } ?: views.setViewVisibility(hourlyId[1], View.INVISIBLE)
         views.setTextViewText(
             hourlyId[2],
-            hourly?.temperature?.temperature?.formatMeasure(
+            weather.nextHourlyForecast.getOrNull(i)?.temperature?.temperature?.formatMeasure(
                 context,
                 temperatureUnit,
                 valueWidth = UnitWidth.NARROW,
@@ -487,7 +311,7 @@ private fun buildRemoteViews(
         )
     )
     // Loop through 6 first days
-    dailyIds.take(if (split) 5 else 6).forEachIndexed { i, dailyId ->
+    dailyIds.forEachIndexed { i, dailyId ->
         weather.dailyForecastStartingToday.getOrNull(i)?.let {
             views.setTextViewText(
                 dailyId[0],
@@ -498,22 +322,16 @@ private fun buildRemoteViews(
                 }
             )
         } ?: views.setTextViewText(dailyId[0], null)
-        val daily = weather.dailyForecastStartingToday.getOrNull(i)
-        val useDayIcon = if (split) {
-            AbstractRemoteViewsPresenter.isWeekIconDaytime(
-                SettingsManager.getInstance(context).widgetWeekIconMode, dayTime
-            )
-        } else true
-        (if (useDayIcon) daily?.day?.weatherCode else daily?.night?.weatherCode)?.let {
+        weather.dailyForecastStartingToday.getOrNull(i)?.day?.weatherCode?.let {
             views.setViewVisibility(dailyId[1], View.VISIBLE)
             views.setImageViewUri(
                 dailyId[1],
                 ResourceHelper.getWidgetNotificationIconUri(
                     provider,
                     it,
-                    useDayIcon,
-                    split && SettingsManager.getInstance(context).isWidgetUsingMonochromeIcons,
-                    if (split) splitIconColor else NotificationTextColor.LIGHT
+                    dayTime = true,
+                    minimal = false,
+                    NotificationTextColor.LIGHT
                 )
             )
         } ?: views.setViewVisibility(dailyId[1], View.INVISIBLE)
@@ -535,21 +353,19 @@ private fun buildRemoteViews(
                 unitWidth = UnitWidth.NARROW
             )
         )
-        if (!split) {
-            weather.dailyForecastStartingToday.getOrNull(i)?.night?.weatherCode?.let {
-                views.setViewVisibility(dailyId[4], View.VISIBLE)
-                views.setImageViewUri(
-                    dailyId[4],
-                    ResourceHelper.getWidgetNotificationIconUri(
-                        provider,
-                        it,
-                        dayTime = false,
-                        minimal = false,
-                        NotificationTextColor.LIGHT
-                    )
+        weather.dailyForecastStartingToday.getOrNull(i)?.night?.weatherCode?.let {
+            views.setViewVisibility(dailyId[4], View.VISIBLE)
+            views.setImageViewUri(
+                dailyId[4],
+                ResourceHelper.getWidgetNotificationIconUri(
+                    provider,
+                    it,
+                    dayTime = false,
+                    minimal = false,
+                    NotificationTextColor.LIGHT
                 )
-            } ?: views.setViewVisibility(dailyId[4], View.INVISIBLE)
-        }
+            )
+        } ?: views.setViewVisibility(dailyId[4], View.INVISIBLE)
     }
 
     // pending intent.
@@ -558,11 +374,7 @@ private fun buildRemoteViews(
         AbstractRemoteViewsPresenter.getWeatherPendingIntent(
             context,
             location,
-            if (split) {
-                Widgets.SPLIT_FORECAST_PENDING_INTENT_CODE_WEATHER
-            } else {
-                Widgets.MATERIAL_YOU_FORECAST_PENDING_INTENT_CODE_WEATHER
-            }
+            Widgets.MATERIAL_YOU_FORECAST_PENDING_INTENT_CODE_WEATHER
         )
     )
 
