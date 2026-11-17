@@ -174,7 +174,6 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         val primaryIds = intArrayOf(
             R.id.widget_material_you_forecast_currentTemperature,
             R.id.widget_material_you_forecast_city,
-            R.id.widget_split_forecast_date,
             R.id.widget_material_you_forecast_hour_1, R.id.widget_material_you_forecast_hour_2,
             R.id.widget_material_you_forecast_hour_3, R.id.widget_material_you_forecast_hour_4,
             R.id.widget_material_you_forecast_hour_5,
@@ -196,6 +195,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         val secondaryIds = intArrayOf(
             R.id.widget_material_you_forecast_weatherText,
             R.id.widget_split_forecast_air_quality,
+            R.id.widget_split_forecast_date,
             R.id.widget_split_forecast_subtitle,
             R.id.widget_material_you_forecast_nightTemperature_1,
             R.id.widget_material_you_forecast_nightTemperature_2,
@@ -213,11 +213,11 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             fun setScaledSize(id: Int, baseSp: Float) {
                 views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, baseSp * scale)
             }
-            setScaledSize(R.id.widget_material_you_forecast_currentTemperature, 34f)
+            setScaledSize(R.id.widget_material_you_forecast_currentTemperature, 36f)
             setScaledSize(R.id.widget_material_you_forecast_city, 15f)
-            setScaledSize(R.id.widget_material_you_forecast_weatherText, 14f)
+            setScaledSize(R.id.widget_material_you_forecast_weatherText, 12f)
             setScaledSize(R.id.widget_split_forecast_air_quality, 12f)
-            setScaledSize(R.id.widget_split_forecast_date, 13f)
+            setScaledSize(R.id.widget_split_forecast_date, 12f)
             setScaledSize(R.id.widget_split_forecast_subtitle, 12f)
             val forecastTextIds = listOf(
                 intArrayOf(
