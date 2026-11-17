@@ -174,6 +174,8 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         val primaryIds = intArrayOf(
             R.id.widget_material_you_forecast_currentTemperature,
             R.id.widget_material_you_forecast_city,
+            R.id.widget_material_you_forecast_weatherText,
+            R.id.widget_split_forecast_air_quality,
             R.id.widget_material_you_forecast_hour_1, R.id.widget_material_you_forecast_hour_2,
             R.id.widget_material_you_forecast_hour_3, R.id.widget_material_you_forecast_hour_4,
             R.id.widget_material_you_forecast_hour_5,
@@ -189,22 +191,20 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             R.id.widget_material_you_forecast_dayTemperature_2,
             R.id.widget_material_you_forecast_dayTemperature_3,
             R.id.widget_material_you_forecast_dayTemperature_4,
-            R.id.widget_material_you_forecast_dayTemperature_5
+            R.id.widget_material_you_forecast_dayTemperature_5,
+            R.id.widget_split_forecast_temp_separator_1, R.id.widget_split_forecast_temp_separator_2,
+            R.id.widget_split_forecast_temp_separator_3, R.id.widget_split_forecast_temp_separator_4,
+            R.id.widget_split_forecast_temp_separator_5
         )
         primaryIds.forEach { views.setTextColor(it, primary) }
         val secondaryIds = intArrayOf(
-            R.id.widget_material_you_forecast_weatherText,
-            R.id.widget_split_forecast_air_quality,
             R.id.widget_split_forecast_date,
             R.id.widget_split_forecast_subtitle,
             R.id.widget_material_you_forecast_nightTemperature_1,
             R.id.widget_material_you_forecast_nightTemperature_2,
             R.id.widget_material_you_forecast_nightTemperature_3,
             R.id.widget_material_you_forecast_nightTemperature_4,
-            R.id.widget_material_you_forecast_nightTemperature_5,
-            R.id.widget_split_forecast_temp_separator_1, R.id.widget_split_forecast_temp_separator_2,
-            R.id.widget_split_forecast_temp_separator_3, R.id.widget_split_forecast_temp_separator_4,
-            R.id.widget_split_forecast_temp_separator_5
+            R.id.widget_material_you_forecast_nightTemperature_5
         )
         secondaryIds.forEach { views.setTextColor(it, secondary) }
 

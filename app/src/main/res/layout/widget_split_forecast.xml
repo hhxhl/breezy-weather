@@ -55,7 +55,7 @@
                     android:maxLines="1" android:ellipsize="end" />
                 <TextView android:id="@+id/widget_material_you_forecast_weatherText"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textColor="?android:attr/textColorSecondary" android:textSize="12sp"
+                    android:textColor="?android:attr/textColorPrimary" android:textSize="12sp"
                     android:fontFamily="sans-serif" android:textStyle="normal"
                     android:gravity="center_horizontal"
                     android:maxLines="1" android:ellipsize="end"
@@ -65,7 +65,7 @@
         <!-- Air quality: hide completely when the provider has no AQI. -->
         <TextView android:id="@+id/widget_split_forecast_air_quality"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:layout_marginTop="3dp" android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="3dp" android:textColor="?android:attr/textColorPrimary"
             android:textSize="12sp" android:maxLines="1" android:ellipsize="end"
             android:visibility="gone" />
         <TextView android:layout_width="match_parent" android:layout_height="1dp"
@@ -104,7 +104,7 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_1"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                     android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
@@ -120,7 +120,7 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_2"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                     android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
@@ -136,7 +136,7 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_3"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                     android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
@@ -152,7 +152,7 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_4"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                     android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
@@ -168,7 +168,7 @@
                     android:src="@drawable/weather_cloudy" />
                 <TextView android:id="@+id/widget_material_you_forecast_hourlyTemperature_5"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                     android:textSize="13sp" android:textColor="?android:attr/textColorPrimary" android:gravity="center"
                     android:maxLines="1" android:ellipsize="end" android:text="@string/widget_ellipsis" />
             </LinearLayout>
@@ -192,15 +192,15 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_1"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
-                        android:id="@+id/widget_split_forecast_temp_separator_1" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/widget_split_forecast_temp_separator_1" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_1"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
@@ -219,15 +219,15 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_2"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
-                        android:id="@+id/widget_split_forecast_temp_separator_2" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/widget_split_forecast_temp_separator_2" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_2"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
@@ -246,15 +246,15 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_3"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
-                        android:id="@+id/widget_split_forecast_temp_separator_3" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/widget_split_forecast_temp_separator_3" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_3"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
@@ -273,15 +273,15 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_4"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
-                        android:id="@+id/widget_split_forecast_temp_separator_4" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/widget_split_forecast_temp_separator_4" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_4"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
@@ -300,15 +300,15 @@
                     android:orientation="horizontal" android:gravity="center">
                     <TextView android:id="@+id/widget_material_you_forecast_dayTemperature_5"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorPrimary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
-                        android:id="@+id/widget_split_forecast_temp_separator_5" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorSecondary" />
+                        android:fontFamily="sans-serif"
+                        android:id="@+id/widget_split_forecast_temp_separator_5" android:text="/" android:textSize="11sp" android:textColor="?android:attr/textColorPrimary" />
                     <TextView android:id="@+id/widget_material_you_forecast_nightTemperature_5"
                         android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-condensed-light"
+                        android:fontFamily="sans-serif"
                         android:textSize="11sp" android:textColor="?android:attr/textColorSecondary"
                         android:maxLines="1" android:text="@string/widget_ellipsis" />
                 </LinearLayout>
