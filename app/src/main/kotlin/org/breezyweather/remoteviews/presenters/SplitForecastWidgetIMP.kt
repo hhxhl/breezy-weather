@@ -213,7 +213,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             fun setScaledSize(id: Int, baseSp: Float) {
                 views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, baseSp * scale)
             }
-            setScaledSize(R.id.widget_material_you_forecast_currentTemperature, 36f)
+            setScaledSize(R.id.widget_material_you_forecast_currentTemperature, 31f)
             setScaledSize(R.id.widget_material_you_forecast_city, 13f)
             setScaledSize(R.id.widget_material_you_forecast_weatherText, 12f)
             setScaledSize(R.id.widget_split_forecast_air_quality, 12f)

@@ -45,7 +45,7 @@
                 <TextView android:id="@+id/widget_material_you_forecast_currentTemperature"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:text="@string/widget_ellipsis" android:textColor="?android:attr/textColorPrimary"
-                    android:textSize="36sp" android:fontFamily="sans-serif"
+                    android:textSize="31sp" android:fontFamily="sans-serif-condensed-light"
                     android:textStyle="normal" android:includeFontPadding="false"
                     android:gravity="center_horizontal"
                     android:maxLines="1" android:ellipsize="end" />
