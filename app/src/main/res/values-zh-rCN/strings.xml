@@ -870,4 +870,6 @@
     <string name="settings_source_api_key_invalid">值的格式不符预期</string>
     <string name="message_please_wait_refresh">请等待刷新完成</string>
     <string name="settings_main_background_title">基于天气的背景</string>
+    <string name="widget_split_forecast_current_temperature_size">当前温度大小</string>
+    <string name="widget_split_forecast_forecast_temperature_size">预报温度大小</string>
 </resources>

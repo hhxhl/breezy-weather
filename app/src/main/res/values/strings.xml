@@ -1338,4 +1338,6 @@
     <string name="knmi_weather_text_hail_with_sun" translatable="false">Hail with some sun</string>
     <string name="knmi_weather_text_slippery_due_to_sleet" translatable="false">Slipperiness due to sleet</string>
     <string name="knmi_weather_text_fog" translatable="false">@string/common_weather_text_fog</string>
+    <string name="widget_split_forecast_current_temperature_size">Current temperature size</string>
+    <string name="widget_split_forecast_forecast_temperature_size">Forecast temperature size</string>
 </resources>
