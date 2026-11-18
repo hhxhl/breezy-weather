@@ -54,7 +54,6 @@ import org.breezyweather.R
 import org.breezyweather.common.extensions.plus
 import org.breezyweather.common.extensions.toBitmap
 import org.breezyweather.common.options.DarkMode
-import org.breezyweather.common.options.DarkModeLocation
 import org.breezyweather.common.utils.LauncherIconUtils
 import org.breezyweather.common.utils.helpers.IntentHelper
 import org.breezyweather.domain.settings.SettingsManager
@@ -67,7 +66,6 @@ import org.breezyweather.ui.settings.preference.bottomInsetItem
 import org.breezyweather.ui.settings.preference.clickablePreferenceItem
 import org.breezyweather.ui.settings.preference.composables.CalendarPreferenceView
 import org.breezyweather.ui.settings.preference.composables.LanguagePreferenceView
-import org.breezyweather.ui.settings.preference.composables.ListPreferenceView
 import org.breezyweather.ui.settings.preference.composables.ListPreferenceViewWithCard
 import org.breezyweather.ui.settings.preference.composables.PreferenceScreen
 import org.breezyweather.ui.settings.preference.composables.PreferenceViewWithCard
@@ -150,23 +148,6 @@ fun AppearanceSettingsScreen(
                         val newDarkMode = DarkMode.getInstance(it)
                         SettingsManager.getInstance(context).darkMode = newDarkMode
                         BreezyWeather.instance.updateDayNightMode(newDarkMode.value)
-                    }
-                )
-            }
-            smallSeparatorItem()
-            switchPreferenceItem(R.string.settings_appearance_dark_mode_locations_title) { id ->
-                ListPreferenceView(
-                    titleId = id,
-                    selectedKey = DarkModeLocation.getInstance(
-                        SettingsManager.getInstance(context).dayNightModeForLocations
-                    ).id,
-                    valueArrayId = R.array.dark_mode_location_values,
-                    nameArrayId = R.array.dark_modes_location,
-                    card = true,
-                    enabled = darkMode != DarkMode.LIGHT,
-                    onValueChanged = {
-                        val newDarkModeLocation = DarkModeLocation.getInstance(it)
-                        SettingsManager.getInstance(context).dayNightModeForLocations = newDarkModeLocation.value
                     }
                 )
             }

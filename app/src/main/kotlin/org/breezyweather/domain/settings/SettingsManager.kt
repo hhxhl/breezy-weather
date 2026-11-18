@@ -173,12 +173,31 @@ class SettingsManager private constructor(
 
     var darkMode: DarkMode
         set(value) {
-            config.edit().putString("dark_mode", value.id).apply()
+            config.edit()
+                .putString("dark_mode", value.id)
+                .putBoolean("dark_mode_four_options_migrated", true)
+                .remove("day_night_mode_locations")
+                .apply()
             notifySettingsChanged()
         }
-        get() = DarkMode.getInstance(
-            config.getString("dark_mode", null) ?: "system"
-        )
+        get() {
+            val stored = config.getString("dark_mode", null)
+            if (config.getBoolean("dark_mode_four_options_migrated", false)) {
+                return DarkMode.getInstance(stored ?: DarkMode.SYSTEM.id)
+            }
+            // Migrate the old separate location-based toggle on first read.
+            // Keep the old pre-Android 10 default when upgrading existing installs.
+            val followLocationDayNight = config.getBoolean(
+                "day_night_mode_locations", Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+            )
+            val migrated = DarkMode.fromLegacy(stored, followLocationDayNight)
+            config.edit()
+                .putString("dark_mode", migrated.id)
+                .putBoolean("dark_mode_four_options_migrated", true)
+                .remove("day_night_mode_locations")
+                .apply()
+            return migrated
+        }
 
 
     var isLauncherIconVisible: Boolean
@@ -187,15 +206,6 @@ class SettingsManager private constructor(
             notifySettingsChanged()
         }
         get() = config.getBoolean("launcher_icon_visible", true)
-
-    // Default config is: follow system on Android 10+ (disabled), automatic day/night switch (enabled)
-    // on Android < 10 where dark mode doesn’t exist natively
-    var dayNightModeForLocations: Boolean
-        set(value) {
-            config.edit().putBoolean("day_night_mode_locations", value).apply()
-            notifySettingsChanged()
-        }
-        get() = config.getBoolean("day_night_mode_locations", Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
 
     // service providers.
     var locationSource: String

@@ -19,7 +19,6 @@ package org.breezyweather.ui.theme
 import android.content.Context
 import android.content.res.Configuration
 import breezyweather.domain.location.model.Location
-import org.breezyweather.common.options.DarkMode
 import org.breezyweather.domain.location.model.isDaylight
 import org.breezyweather.domain.settings.SettingsManager
 import org.breezyweather.ui.theme.weatherView.WeatherThemeDelegate
@@ -47,40 +46,28 @@ class ThemeManager private constructor(
             return instance!!
         }
 
+        /** A missing location or missing rise/set data falls back to the system theme. */
+        fun hasLocationDayNight(location: Location?): Boolean {
+            val sun = location?.weather?.today?.sun
+            return sun?.riseDate != null && sun.setDate != null
+        }
+
         fun isLightTheme(
             context: Context,
             location: Location?,
         ) = isLightTheme(
             context = context,
-            daylight = location?.isDaylight
+            daylight = if (hasLocationDayNight(location)) location?.isDaylight else null
         )
 
-        /**
-         * Resolve the theme for a location using the app preference.
-         *
-         * When location-based day/night is enabled, the location may override the base
-         * dark theme. Otherwise, follow the selected app mode (including the actual
-         * system theme for SYSTEM). A fixed light theme is always light.
-         */
+        /** Four mutually exclusive modes; use the system theme when location data is unavailable. */
         fun isLightTheme(
             context: Context,
             daylight: Boolean?,
-        ): Boolean {
-            val settings = SettingsManager.getInstance(context)
-            return when (settings.darkMode) {
-                DarkMode.LIGHT -> true
-                DarkMode.DARK -> if (settings.dayNightModeForLocations && daylight != null) {
-                    daylight
-                } else {
-                    false
-                }
-                DarkMode.SYSTEM -> if (settings.dayNightModeForLocations && daylight != null) {
-                    daylight
-                } else {
-                    !isSystemInDarkMode(context)
-                }
-            }
-        }
+        ): Boolean = SettingsManager.getInstance(context).darkMode.isLightTheme(
+            systemDark = isSystemInDarkMode(context),
+            daylight = daylight
+        )
 
         /**
          * Read the effective night configuration of the application, not the requested

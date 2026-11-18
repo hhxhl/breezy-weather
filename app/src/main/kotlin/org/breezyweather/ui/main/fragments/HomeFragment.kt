@@ -340,8 +340,8 @@ class HomeFragment : MainModuleFragment() {
         val settings = SettingsManager.getInstance(context)
         val expectedLightTheme = ThemeManager.isLightTheme(context, location)
         // Don't pin the Activity to a fixed mode when the user wants the system theme.
-        val followSystem = settings.darkMode == DarkMode.SYSTEM &&
-            (!settings.dayNightModeForLocations || location == null)
+        val followSystem = settings.darkMode == DarkMode.SYSTEM ||
+            (settings.darkMode == DarkMode.DAY_NIGHT && !ThemeManager.hasLocationDayNight(location))
         (activity as BreezyActivity).updateLocalNightMode(expectedLightTheme, followSystem)
     }
 

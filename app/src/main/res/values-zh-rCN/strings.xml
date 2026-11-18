@@ -227,6 +227,8 @@
     <string name="settings_modules_live_wallpaper_title">动态壁纸</string>
     <string name="settings_location_service">位置服务</string>
     <string name="settings_appearance_dark_mode_title">深色模式</string>
+    <string name="settings_appearance_dark_mode_always_light">始终浅色</string>
+    <string name="settings_appearance_dark_mode_always_dark">始终深色</string>
     <string name="settings_appearance">外观</string>
     <string name="settings_appearance_launcher_icon_title">显示桌面图标</string>
     <string name="settings_appearance_launcher_icon_summary_on">应用图标会显示在桌面和启动器中。</string>
@@ -828,7 +830,7 @@
     <string name="action_share_no_app">未找到分享应用</string>
     <string name="action_translate">翻译</string>
     <string name="action_translate_no_app">未找到翻译应用</string>
-    <string name="settings_appearance_dark_mode_locations_day_night">按照实际时间设置主题模式</string>
+    <string name="settings_appearance_dark_mode_locations_day_night">跟随所在地昼夜</string>
     <string name="settings_appearance_dark_mode_locations_dark">应用处于深色模式下时始终是深色</string>
     <string name="air_quality_pm25_about">关于细颗粒物 (%s)</string>
     <string name="air_quality_pm25_index">%s 的空气质量指数</string>

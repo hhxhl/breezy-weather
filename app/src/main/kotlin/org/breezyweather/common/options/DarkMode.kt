@@ -27,6 +27,7 @@ enum class DarkMode(
 ) : BaseEnum {
 
     SYSTEM("system", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM),
+    DAY_NIGHT("day_night", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM),
     LIGHT("light", AppCompatDelegate.MODE_NIGHT_NO),
     DARK("dark", AppCompatDelegate.MODE_NIGHT_YES),
     ;
@@ -38,6 +39,20 @@ enum class DarkMode(
         ) = entries.firstOrNull {
             it.id == value
         } ?: SYSTEM
+
+        /** Translate the former two-setting combination into one unambiguous mode. */
+        fun fromLegacy(mode: String?, followLocationDayNight: Boolean): DarkMode {
+            val selected = getInstance(mode ?: SYSTEM.id)
+            return if (followLocationDayNight && selected != LIGHT) DAY_NIGHT else selected
+        }
+    }
+
+    /** Resolve the preferred appearance without coupling it to Android resources or activities. */
+    fun isLightTheme(systemDark: Boolean, daylight: Boolean?): Boolean = when (this) {
+        SYSTEM -> !systemDark
+        DAY_NIGHT -> daylight ?: !systemDark
+        LIGHT -> true
+        DARK -> false
     }
 
     override val valueArrayId = R.array.dark_mode_values

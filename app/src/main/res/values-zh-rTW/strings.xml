@@ -197,6 +197,8 @@
     <string name="settings_modules_live_wallpaper_title">動態桌布</string>
     <string name="settings_location_service">定位服務</string>
     <string name="settings_appearance_dark_mode_title">應用程式深色模式</string>
+    <string name="settings_appearance_dark_mode_always_light">始終淺色</string>
+    <string name="settings_appearance_dark_mode_always_dark">始終深色</string>
     <string name="settings_appearance">外觀</string>
     <string name="settings_appearance_icon_pack_title">圖示套件</string>
     <string name="settings_main_gravity_sensor_switch">重力感應</string>
@@ -817,7 +819,7 @@
     <string name="temperature_normals_deviation_explanation_minimum">與此位置之%s平均最低氣溫偏差</string>
     <string name="widget_custom_subtitle_help_content_description">顯示自訂副標題關鍵字說明</string>
     <string name="widget_custom_subtitle_alert_box_title">自訂副標題說明</string>
-    <string name="settings_appearance_dark_mode_locations_day_night">跟隨位置晝夜</string>
+    <string name="settings_appearance_dark_mode_locations_day_night">跟隨所在地晝夜</string>
     <string name="settings_appearance_dark_mode_locations_dark">應用程式使用深色模式時，總是顯示深色模式</string>
     <string name="action_open_in_other_app_no_app">找不到地圖應用程式</string>
     <string name="action_share_no_app">找不到可分享的應用程式</string>
