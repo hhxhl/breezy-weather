@@ -17,7 +17,9 @@
 package org.breezyweather.remoteviews.config
 
 import android.view.View
+import android.widget.AdapterView
 import android.widget.RemoteViews
+import androidx.appcompat.widget.AppCompatSpinner
 import breezyweather.data.location.LocationRepository
 import breezyweather.data.weather.WeatherRepository
 import breezyweather.domain.location.model.Location
@@ -56,7 +58,7 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
         // Use the existing widget card and text color options while preserving
         // the split widget's original Material You background by default.
         cardStyleValueNow = "auto"
-        textColorValueNow = "dark"
+        textColorValueNow = "auto"
         // Existing subtitle options and parser; prefer alternate calendar if it is configured.
         subtitleDataValueNow = if (CalendarHelper.getAlternateCalendarSetting(this) != null) "lunar" else "time"
     }
@@ -66,6 +68,20 @@ class SplitForecastWidgetConfigActivity : AbstractWidgetConfigActivity() {
         mCardStyleContainer?.visibility = View.VISIBLE
         mCardAlphaContainer?.visibility = View.VISIBLE
         mTextColorContainer?.visibility = View.VISIBLE
+        // Only this custom widget treats "auto" as system colors. Do not invoke the
+        // common widget listener, which requests wallpaper permission for "auto".
+        findViewById<AppCompatSpinner>(R.id.activity_widget_config_blackTextSpinner).onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    val selected = textColorValues[position]
+                    if (textColorValueNow != selected) {
+                        textColorValueNow = selected
+                        updateHostView()
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            }
         mTextSizeContainer?.visibility = View.VISIBLE
         mHideSubtitleContainer?.visibility = View.VISIBLE
         mSubtitleDataContainer?.visibility = View.VISIBLE

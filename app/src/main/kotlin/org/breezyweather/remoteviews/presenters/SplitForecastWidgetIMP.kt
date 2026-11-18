@@ -19,10 +19,15 @@ package org.breezyweather.remoteviews.presenters
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.res.ColorStateList
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
+import android.os.Build
 import android.util.TypedValue
 import android.view.View
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 import breezyweather.domain.location.model.Location
 import org.breezyweather.R
 import org.breezyweather.background.receiver.widget.WidgetSplitForecastProvider
@@ -55,7 +60,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         if (!store.getBoolean(APPEARANCE_INITIALIZED_KEY, false)) {
             store.edit()
                 .putString(context.getString(R.string.key_card_style), "auto")
-                .putString(context.getString(R.string.key_text_color), "dark")
+                .putString(context.getString(R.string.key_text_color), "auto")
                 .putBoolean(APPEARANCE_INITIALIZED_KEY, true)
                 .apply()
         }
@@ -88,16 +93,25 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         subtitleData: String?,
         pollenIndexSource: PollenIndexSource?,
     ): RemoteViews {
-        val color = AbstractRemoteViewsPresenter.WidgetColor(
-            context, cardStyle ?: "auto", textColor ?: "dark", location?.isDaylight ?: true
-        )
-        val views = buildForecastViews(context, location, color.minimalIconColor)
-        if (color.showCard) {
-            // Preserve the current Material You card in the app-following mode.
+        // This widget follows Android's actual theme, independently of Breezy Weather's
+        // location-based theme setting. Keep explicit card/text color choices unchanged.
+        val style = cardStyle ?: "auto"
+        val textSetting = textColor ?: "auto"
+        val colors = resolveTextColors(context, style, textSetting)
+        val iconColor = when {
+            textSetting == "dark" || (textSetting == "auto" && style == "light") -> NotificationTextColor.DARK
+            textSetting == "light" || (textSetting == "auto" && style == "dark") -> NotificationTextColor.LIGHT
+            else -> NotificationTextColor.GREY
+        }
+        val views = buildForecastViews(context, location, iconColor)
+        if (style != "none") {
             views.setImageViewResource(
                 R.id.widget_split_forecast_card,
-                if (cardStyle == null || cardStyle == "auto") R.drawable.widget_m3_background
-                else AbstractRemoteViewsPresenter.getCardBackgroundId(color)
+                when (style) {
+                    "light" -> R.drawable.widget_card_light
+                    "dark" -> R.drawable.widget_card_dark
+                    else -> R.drawable.widget_m3_background
+                }
             )
             views.setInt(
                 R.id.widget_split_forecast_card, "setImageAlpha", (cardAlpha.coerceIn(0, 100) * 255) / 100
@@ -106,7 +120,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             views.setViewVisibility(R.id.widget_split_forecast_card, View.GONE)
         }
 
-        applyAppearance(views, color, textSize)
+        applyAppearance(views, colors, textSize)
         applyAirQuality(views, context, location, pollenIndexSource)
 
         if (location != null) {
@@ -161,16 +175,54 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
         }
     }
 
+    private data class SplitTextColors(val day: Int, val night: Int)
+
+    private fun resolveTextColors(context: Context, style: String, textSetting: String): SplitTextColors {
+        val darkText = ContextCompat.getColor(context, R.color.colorTextDark)
+        val lightText = ContextCompat.getColor(context, R.color.colorTextLight)
+        return when (textSetting) {
+            "dark" -> SplitTextColors(darkText, darkText)
+            "light" -> SplitTextColors(lightText, lightText)
+            else -> when (style) {
+                "light" -> SplitTextColors(darkText, darkText)
+                "dark" -> SplitTextColors(lightText, lightText)
+                "auto" -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // Material You tones contrast with the M3 accent surfaces used by this widget.
+                    SplitTextColors(
+                        context.getColor(android.R.color.system_neutral1_900),
+                        context.getColor(android.R.color.system_neutral1_50)
+                    )
+                } else {
+                    SplitTextColors(darkText, lightText)
+                }
+                // Transparent: do not read the wallpaper (live wallpapers cannot be sampled reliably).
+                else -> SplitTextColors(darkText, lightText)
+            }
+        }
+    }
+
     private fun applyAppearance(
         views: RemoteViews,
-        color: AbstractRemoteViewsPresenter.WidgetColor,
+        colors: SplitTextColors,
         textSize: Int,
     ) {
-        val primary = color.textColor
-        val secondary = Color.argb(
-            (Color.alpha(primary) * 0.70f).toInt(),
-            Color.red(primary), Color.green(primary), Color.blue(primary)
+        fun secondary(color: Int): Int = Color.argb(
+            (Color.alpha(color) * 0.70f).toInt(),
+            Color.red(color), Color.green(color), Color.blue(color)
         )
+        fun setTextColor(id: Int, day: Int, night: Int) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && day != night) {
+                // The launcher selects day/night at RemoteViews application time.
+                views.setColorStateList(
+                    id, "setTextColor", ColorStateList.valueOf(day), ColorStateList.valueOf(night)
+                )
+            } else {
+                // Before Android 12, use the system configuration, not this app's local theme.
+                val systemNight = (Resources.getSystem().configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                    Configuration.UI_MODE_NIGHT_YES
+                views.setTextColor(id, if (systemNight) night else day)
+            }
+        }
         val primaryIds = intArrayOf(
             R.id.widget_material_you_forecast_currentTemperature,
             R.id.widget_material_you_forecast_city,
@@ -196,7 +248,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             R.id.widget_split_forecast_temp_separator_3, R.id.widget_split_forecast_temp_separator_4,
             R.id.widget_split_forecast_temp_separator_5
         )
-        primaryIds.forEach { views.setTextColor(it, primary) }
+        primaryIds.forEach { setTextColor(it, colors.day, colors.night) }
         val secondaryIds = intArrayOf(
             R.id.widget_split_forecast_date,
             R.id.widget_split_forecast_subtitle,
@@ -206,7 +258,7 @@ object SplitForecastWidgetIMP : AbstractRemoteViewsPresenter() {
             R.id.widget_material_you_forecast_nightTemperature_4,
             R.id.widget_material_you_forecast_nightTemperature_5
         )
-        secondaryIds.forEach { views.setTextColor(it, secondary) }
+        secondaryIds.forEach { setTextColor(it, secondary(colors.day), secondary(colors.night)) }
 
         // Reuse Breezy Weather's original widget-wide text size percentage.
         // Keep the current large temperature on its XML AutoSize (20-36sp) so it
