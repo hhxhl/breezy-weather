@@ -48,6 +48,7 @@ import org.breezyweather.common.extensions.isDarkMode
 import org.breezyweather.common.extensions.isMotionReduced
 import org.breezyweather.common.extensions.isTabletDevice
 import org.breezyweather.common.extensions.setSystemBarStyle
+import org.breezyweather.common.options.DarkMode
 import org.breezyweather.common.options.appearance.BackgroundAnimationMode
 import org.breezyweather.databinding.FragmentHomeBinding
 import org.breezyweather.domain.location.model.getPlace
@@ -335,9 +336,13 @@ class HomeFragment : MainModuleFragment() {
     }
 
     private fun updateDarkMode(location: Location?) {
-        val expectedLightTheme = ThemeManager.isLightTheme(requireContext(), location)
-
-        (activity as BreezyActivity).updateLocalNightMode(expectedLightTheme)
+        val context = requireContext()
+        val settings = SettingsManager.getInstance(context)
+        val expectedLightTheme = ThemeManager.isLightTheme(context, location)
+        // Don't pin the Activity to a fixed mode when the user wants the system theme.
+        val followSystem = settings.darkMode == DarkMode.SYSTEM &&
+            (!settings.dayNightModeForLocations || location == null)
+        (activity as BreezyActivity).updateLocalNightMode(expectedLightTheme, followSystem)
     }
 
     @SuppressLint("ClickableViewAccessibility", "NotifyDataSetChanged")

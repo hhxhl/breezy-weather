@@ -17,9 +17,7 @@
 package org.breezyweather.ui.settings.compose
 
 import android.app.Activity
-import android.app.UiModeManager
 import android.content.Context
-import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -53,12 +51,8 @@ import androidx.compose.ui.unit.dp
 import org.breezyweather.BreezyWeather
 import org.breezyweather.BuildConfig
 import org.breezyweather.R
-import org.breezyweather.common.extensions.currentLocale
-import org.breezyweather.common.extensions.getFormattedTime
-import org.breezyweather.common.extensions.is12Hour
 import org.breezyweather.common.extensions.plus
 import org.breezyweather.common.extensions.toBitmap
-import org.breezyweather.common.extensions.uiModeManager
 import org.breezyweather.common.options.DarkMode
 import org.breezyweather.common.options.DarkModeLocation
 import org.breezyweather.common.utils.LauncherIconUtils
@@ -141,43 +135,7 @@ fun AppearanceSettingsScreen(
             sectionHeaderItem(R.string.settings_appearance_section_theme)
             listPreferenceItem(R.string.settings_appearance_dark_mode_title) { id ->
                 val valueArray = stringArrayResource(R.array.dark_mode_values)
-                val nameArray = stringArrayResource(R.array.dark_modes).mapIndexed { index, string ->
-                    if (index == 0) {
-                        context.getString(
-                            R.string.parenthesis,
-                            context.getString(R.string.settings_follow_system),
-                            when (context.uiModeManager?.nightMode) {
-                                UiModeManager.MODE_NIGHT_NO -> context.getString(R.string.settings_color_light)
-                                UiModeManager.MODE_NIGHT_YES -> context.getString(R.string.settings_color_dark)
-                                UiModeManager.MODE_NIGHT_AUTO -> {
-                                    context.getString(R.string.settings_appearance_dark_mode_locations_day_night)
-                                }
-                                UiModeManager.MODE_NIGHT_CUSTOM -> context.getString(
-                                    R.string.settings_appearance_dark_mode_custom,
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                        context.uiModeManager!!.customNightModeStart.getFormattedTime(
-                                            context.currentLocale,
-                                            context.is12Hour
-                                        )
-                                    } else {
-                                        context.getString(R.string.null_data_text)
-                                    },
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                                        context.uiModeManager!!.customNightModeEnd.getFormattedTime(
-                                            context.currentLocale,
-                                            context.is12Hour
-                                        )
-                                    } else {
-                                        context.getString(R.string.null_data_text)
-                                    }
-                                )
-                                else -> context.getString(R.string.settings_color_light)
-                            }
-                        )
-                    } else {
-                        string
-                    }
-                }.toTypedArray()
+                val nameArray = stringArrayResource(R.array.dark_modes)
                 ListPreferenceViewWithCard(
                     title = stringResource(id),
                     summary = { _, value ->
@@ -197,14 +155,11 @@ fun AppearanceSettingsScreen(
             }
             smallSeparatorItem()
             switchPreferenceItem(R.string.settings_appearance_dark_mode_locations_title) { id ->
-                // Always “Follow day/night” when selected app dark mode is “Always light”:
                 ListPreferenceView(
                     titleId = id,
-                    selectedKey = if (darkMode == DarkMode.LIGHT) {
-                        DarkModeLocation.DAY_NIGHT.id
-                    } else {
-                        DarkModeLocation.getInstance(SettingsManager.getInstance(context).dayNightModeForLocations).id
-                    },
+                    selectedKey = DarkModeLocation.getInstance(
+                        SettingsManager.getInstance(context).dayNightModeForLocations
+                    ).id,
                     valueArrayId = R.array.dark_mode_location_values,
                     nameArrayId = R.array.dark_modes_location,
                     card = true,

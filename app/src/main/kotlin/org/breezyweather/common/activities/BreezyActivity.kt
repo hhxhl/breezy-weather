@@ -67,11 +67,14 @@ abstract class BreezyActivity : AppCompatActivity() {
         BreezyWeather.instance.removeActivity(this)
     }
 
-    fun updateLocalNightMode(expectedLightTheme: Boolean) {
-        getDelegate().localNightMode = if (expectedLightTheme) {
-            AppCompatDelegate.MODE_NIGHT_NO
-        } else {
-            AppCompatDelegate.MODE_NIGHT_YES
+    fun updateLocalNightMode(expectedLightTheme: Boolean, followSystem: Boolean = false) {
+        val nightMode = when {
+            followSystem -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            expectedLightTheme -> AppCompatDelegate.MODE_NIGHT_NO
+            else -> AppCompatDelegate.MODE_NIGHT_YES
+        }
+        if (getDelegate().localNightMode != nightMode) {
+            getDelegate().localNightMode = nightMode
         }
     }
 
